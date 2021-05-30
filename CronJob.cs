@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Octopus.Transporter.Core;
 using Quartz;
+using Transporter.Core;
 
 namespace TransporterService
 {

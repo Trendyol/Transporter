@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transporter.Service", "Transporter.Service.csproj", "{93C79A0A-DA8F-4132-AFA1-7F6A22C57BB0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transporter.Core", "Transporter.Core\Transporter.Core.csproj", "{7815AC49-84BA-4F8F-B203-724B075C9EBE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{93C79A0A-DA8F-4132-AFA1-7F6A22C57BB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93C79A0A-DA8F-4132-AFA1-7F6A22C57BB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93C79A0A-DA8F-4132-AFA1-7F6A22C57BB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7815AC49-84BA-4F8F-B203-724B075C9EBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7815AC49-84BA-4F8F-B203-724B075C9EBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7815AC49-84BA-4F8F-B203-724B075C9EBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7815AC49-84BA-4F8F-B203-724B075C9EBE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

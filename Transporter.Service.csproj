@@ -49,4 +49,20 @@
       <Folder Include=".git\refs\tags" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Transporter.Core\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Transporter.Core\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Transporter.Core\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="Transporter.Core\Transporter.Core.csproj" />
+    </ItemGroup>
+
 </Project>
