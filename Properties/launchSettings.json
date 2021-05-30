@@ -1,0 +1,12 @@
+﻿{
+  "profiles": {
+    "WorkerService": {
+      "commandName": "Project",
+      "dotnetRunMessages": "true",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "DOTNET_TransporterJobList" : "[{\"Name\":\"Couchbase Example\",\"Cron\":\"0/1 * * * * ?\",\"Source\":{\"Type\":\"Couchbase\",\"Options\":{\"Bucket\":\"deneme\",\"BatchQuantity\":100,\"ConnectionData\":{\"Hosts\":\"127.0.0.1\",\"Username\":\"transporter\",\"Password\":\"password\",\"UiPort\":8091},\"Condition\":\"type='ExampleType'\"}},\"Target\":{\"Type\":\"mssql\",\"Options\":{\"ConnectionString\":\"Data Source=127.0.0.1;User ID=transporter;Password=password;Database=ExampleDB;\",\"Schema\":\"[dbo]\",\"Table\":\"[ExampleTable]\",\"BatchQuantity\":1000,\"IdColumn\":\"Id\",\"ExcludedColumns\":\"columnName\"}}}]"
+      }
+    }
+  }
+}
