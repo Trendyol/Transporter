@@ -1,4 +1,4 @@
-using Octopus.Transporter.Core;
+using Transporter.Core;
 
 namespace Transporter.MSSQLAdapter
 {

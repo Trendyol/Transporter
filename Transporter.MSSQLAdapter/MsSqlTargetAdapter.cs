@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using Octopus.Transporter.Core;
 using Transporter.Core;
 using Transporter.MSSQLAdapter.Services;
 
