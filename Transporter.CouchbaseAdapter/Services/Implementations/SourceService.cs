@@ -3,8 +3,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Couchbase.Query;
-using Octopus.Transporter.CouchbaseAdapter.Data.Interfaces;
 using Transporter.CouchbaseAdapter.ConfigOptions.Source.Interfaces;
+using Transporter.CouchbaseAdapter.Data.Interfaces;
 using Transporter.CouchbaseAdapter.Services.Interfaces;
 
 namespace Transporter.CouchbaseAdapter.Services.Implementations

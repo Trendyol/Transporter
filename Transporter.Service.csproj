@@ -54,18 +54,21 @@
       <Compile Remove="Transporter.Core\**" />
       <Compile Remove="Transporter.MSSQLAdapter\**" />
       <Compile Remove="Transporter.CouchbaseAdapter\**" />
+      <Compile Remove="Transporter.MSSQLDeleteAdapter\**" />
     </ItemGroup>
 
     <ItemGroup>
       <EmbeddedResource Remove="Transporter.Core\**" />
       <EmbeddedResource Remove="Transporter.MSSQLAdapter\**" />
       <EmbeddedResource Remove="Transporter.CouchbaseAdapter\**" />
+      <EmbeddedResource Remove="Transporter.MSSQLDeleteAdapter\**" />
     </ItemGroup>
 
     <ItemGroup>
       <None Remove="Transporter.Core\**" />
       <None Remove="Transporter.MSSQLAdapter\**" />
       <None Remove="Transporter.CouchbaseAdapter\**" />
+      <None Remove="Transporter.MSSQLDeleteAdapter\**" />
     </ItemGroup>
 
     <ItemGroup>

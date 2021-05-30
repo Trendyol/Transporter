@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Octopus.Transporter.CouchbaseAdapter.Data.Interfaces;
 using Transporter.Core;
 using Transporter.CouchbaseAdapter.Adapters;
 using Transporter.CouchbaseAdapter.Data.Implementations;
@@ -11,7 +10,7 @@ namespace Transporter.CouchbaseAdapter
 {
     public static class ServiceRegisterer
     {
-        public static void OctopusTransporterCouchbaseAdapterRegister(this IServiceCollection builder)
+        public static void TransporterCouchbaseAdapterRegister(this IServiceCollection builder)
         {
             builder.AddSingleton<ICouchbaseProvider, CouchbaseProvider>();
             builder.AddTransient<IBucketProvider, BucketProvider>();

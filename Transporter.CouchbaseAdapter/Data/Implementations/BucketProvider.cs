@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using Couchbase;
-using Octopus.Transporter.CouchbaseAdapter.Data.Interfaces;
 using Transporter.CouchbaseAdapter.Data.Interfaces;
 using Transporter.CouchbaseAdapter.Utils;
 
