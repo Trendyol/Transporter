@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="coverlet.msbuild" Version="2.8.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Dapper" Version="2.0.78" />
+        <PackageReference Include="System.Data.SqlClient" Version="4.8.1" />
+        <PackageReference Include="NLog.Extensions.Logging" Version="1.4.0" />
+        <PackageReference Include="NLog.Targets.Graylog" Version="0.0.1" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+        <ProjectReference Include="..\Transporter.Core\Transporter.Core.csproj" />
+    </ItemGroup>
+
+</Project>

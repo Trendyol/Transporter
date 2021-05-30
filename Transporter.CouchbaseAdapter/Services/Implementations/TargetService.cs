@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Couchbase;
 using Couchbase.KeyValue;
-using Octopus.Transporter.CouchbaseAdapter.Data.Interfaces;
 using Transporter.Core;
 using Transporter.CouchbaseAdapter.ConfigOptions.Target.Interfaces;
 using Transporter.CouchbaseAdapter.Data.Interfaces;

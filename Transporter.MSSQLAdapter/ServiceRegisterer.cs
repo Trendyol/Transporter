@@ -7,7 +7,7 @@ namespace Transporter.MSSQLAdapter
 {
     public static class ServiceRegisterer
     {
-        public static void OctopusTransporterMsSqlAdapterRegister(this IServiceCollection builder)
+        public static void TransporterMsSqlAdapterRegister(this IServiceCollection builder)
         {
             builder.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
             builder.AddTransient<ISourceService, SourceService>();
