@@ -51,14 +51,17 @@
 
     <ItemGroup>
       <Compile Remove="Transporter.Core\**" />
+      <Compile Remove="Transporter.MSSQLAdapter\**" />
     </ItemGroup>
 
     <ItemGroup>
       <EmbeddedResource Remove="Transporter.Core\**" />
+      <EmbeddedResource Remove="Transporter.MSSQLAdapter\**" />
     </ItemGroup>
 
     <ItemGroup>
       <None Remove="Transporter.Core\**" />
+      <None Remove="Transporter.MSSQLAdapter\**" />
     </ItemGroup>
 
     <ItemGroup>

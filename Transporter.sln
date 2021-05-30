@@ -4,6 +4,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transporter.Service", "Tran
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transporter.Core", "Transporter.Core\Transporter.Core.csproj", "{7815AC49-84BA-4F8F-B203-724B075C9EBE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Adapters", "Adapters", "{8838632F-DA8C-418C-9780-D8FE09103B16}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transporter.MSSQLAdapter", "Transporter.MSSQLAdapter\Transporter.MSSQLAdapter.csproj", "{983A7445-5B4F-4A1D-A03C-A653C868FD5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +22,12 @@ Global
 		{7815AC49-84BA-4F8F-B203-724B075C9EBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7815AC49-84BA-4F8F-B203-724B075C9EBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7815AC49-84BA-4F8F-B203-724B075C9EBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{983A7445-5B4F-4A1D-A03C-A653C868FD5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{983A7445-5B4F-4A1D-A03C-A653C868FD5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{983A7445-5B4F-4A1D-A03C-A653C868FD5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{983A7445-5B4F-4A1D-A03C-A653C868FD5A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{983A7445-5B4F-4A1D-A03C-A653C868FD5A} = {8838632F-DA8C-418C-9780-D8FE09103B16}
 	EndGlobalSection
 EndGlobal
