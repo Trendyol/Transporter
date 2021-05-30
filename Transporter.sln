@@ -12,6 +12,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transporter.CouchbaseAdapte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transporter.MSSQLDeleteAdapter", "Transporter.MSSQLDeleteAdapter\Transporter.MSSQLDeleteAdapter.csproj", "{798C08E9-DCCE-421C-AC68-59614D76D597}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFolder", "SolutionFolder", "{48CD987C-1D3C-4D33-B5B9-35AFA44EDA6B}"
+ProjectSection(SolutionItems) = preProject
+	Dockerfile = Dockerfile
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
