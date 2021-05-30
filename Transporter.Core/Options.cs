@@ -1,4 +1,4 @@
-namespace Octopus.Transporter.Core
+namespace Transporter.Core
 {
     public interface IJobSettings
     {

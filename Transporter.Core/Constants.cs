@@ -1,7 +1,7 @@
-namespace Octopus.Transporter.Core
+namespace Transporter.Core
 {
     public static class Constants
     {
-        public const string JobListSectionKey = "OctopusTransporterJobList";
+        public const string JobListSectionKey = "TransporterJobList";
     }
 }

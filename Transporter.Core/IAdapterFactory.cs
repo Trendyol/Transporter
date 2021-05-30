@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Octopus.Transporter.Core
+namespace Transporter.Core
 {
     public interface IAdapterFactory
     {

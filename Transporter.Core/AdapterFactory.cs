@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Octopus.Transporter.Core
+namespace Transporter.Core
 {
     public class AdapterFactory : IAdapterFactory
     {

@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="CouchbaseNetClient" Version="3.1.4" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
         <PackageReference Include="Quartz" Version="3.2.4" />
         <PackageReference Include="Quartz.Extensions.Hosting" Version="3.2.4" />
@@ -52,16 +53,19 @@
     <ItemGroup>
       <Compile Remove="Transporter.Core\**" />
       <Compile Remove="Transporter.MSSQLAdapter\**" />
+      <Compile Remove="Transporter.CouchbaseAdapter\**" />
     </ItemGroup>
 
     <ItemGroup>
       <EmbeddedResource Remove="Transporter.Core\**" />
       <EmbeddedResource Remove="Transporter.MSSQLAdapter\**" />
+      <EmbeddedResource Remove="Transporter.CouchbaseAdapter\**" />
     </ItemGroup>
 
     <ItemGroup>
       <None Remove="Transporter.Core\**" />
       <None Remove="Transporter.MSSQLAdapter\**" />
+      <None Remove="Transporter.CouchbaseAdapter\**" />
     </ItemGroup>
 
     <ItemGroup>

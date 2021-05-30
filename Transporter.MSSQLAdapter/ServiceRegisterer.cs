@@ -1,5 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using Octopus.Transporter.Core;
+using Transporter.Core;
 using Transporter.MSSQLAdapter.Data;
 using Transporter.MSSQLAdapter.Services;
 
