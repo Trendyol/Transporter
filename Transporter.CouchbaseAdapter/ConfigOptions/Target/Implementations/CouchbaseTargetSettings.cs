@@ -17,5 +17,7 @@ namespace Transporter.CouchbaseAdapter.ConfigOptions.Target.Implementations
             return
                 $"Type : {Type} Options : {Options}";
         }
+
+        public string Host { get; set; }
     }
 }

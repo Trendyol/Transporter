@@ -10,6 +10,9 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using Quartz;
 using Transporter.Core;
+using Transporter.CouchbaseAdapter;
+using Transporter.MSSQLAdapter;
+using ServiceRegisterer = Transporter.MSSQLDeleteAdapter.ServiceRegisterer;
 
 namespace TransporterService
 {
@@ -27,7 +30,12 @@ namespace TransporterService
                 {
                     ConfigureLogger(hostContext, services);
                     
+                    services.TransporterMsSqlAdapterRegister();
+                    services.TransporterCouchbaseAdapterRegister();
+                    ServiceRegisterer.TransporterMsSqlDeleteAdapterRegister(services);
+                    
                     services.Configure<QuartzOptions>(hostContext.Configuration.GetSection("Quartz"));
+                    services.AddSingleton<IAdapterFactory, AdapterFactory>();
 
                     services.AddQuartz(q =>
                     {

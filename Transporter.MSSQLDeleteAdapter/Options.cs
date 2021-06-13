@@ -36,6 +36,9 @@ namespace Transporter.MSSQLDeleteAdapter
             return
                 $"Type : {Type} Options : {Options}";
         }
+
+        public string Host { get; set; }
+        public bool IsInsertableOnFailure { get; set; }
     }
 
     public interface ISqlSourceSettings : ISourceOptions
