@@ -35,19 +35,23 @@ namespace Transporter.Core
 
     public interface ISourceOptions : IOptions
     {
+        public string Host { get; set; }
     }
 
     public class SourceOptions : ISourceOptions
     {
         public string Type { get; set; }
+        public string Host { get; set; }
     }
 
     public interface ITargetOptions : IOptions
     {
+        public string Host { get; set; }
     }
 
     public class TargetOptions : ITargetOptions
     {
         public string Type { get; set; }
+        public string Host { get; set; }
     }
 }

@@ -37,6 +37,8 @@ namespace Transporter.MSSQLAdapter
             return
                 $"Type : {Type} Options : {Options}";
         }
+
+        public string Host { get; set; }
     }
 
     public class MsSqlTargetSettings : ISqlTargetSettings
@@ -54,6 +56,8 @@ namespace Transporter.MSSQLAdapter
             return
                 $"Type : {Type} Options : {Options}";
         }
+
+        public string Host { get; set; }
     }
 
     public interface ISqlSourceSettings : ISourceOptions
@@ -109,7 +113,6 @@ namespace Transporter.MSSQLAdapter
         public string StatusIdColumnName { get; set; }
         public string IdColumn { get; set; }
         public string Condition { get; set; }
-
         public override string ToString()
         {
             return
