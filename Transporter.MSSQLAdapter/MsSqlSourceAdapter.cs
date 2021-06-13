@@ -8,7 +8,7 @@ using Transporter.MSSQLAdapter.Services;
 
 namespace Transporter.MSSQLAdapter
 {
-    public class MsSqlSourceAdapter : ISourceAdapter
+    public class MsSqlSourceAdapter : ISourceAdapter, IInsertable
     {
         private readonly IConfiguration _configuration;
         private readonly ISourceService _sourceService;
@@ -31,6 +31,11 @@ namespace Transporter.MSSQLAdapter
         public void SetOptions(IJobSettings jobSettings)
         {
             _settings = GetOptions(jobSettings);
+        }
+        
+        public async Task SetAsync(string data)
+        {
+            await _sourceService.SetSourceDataAsync(_settings, data);
         }
 
         public async Task<IEnumerable<dynamic>> GetAsync()

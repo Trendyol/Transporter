@@ -73,6 +73,9 @@
 
     <ItemGroup>
       <ProjectReference Include="Transporter.Core\Transporter.Core.csproj" />
+      <ProjectReference Include="Transporter.CouchbaseAdapter\Transporter.CouchbaseAdapter.csproj" />
+      <ProjectReference Include="Transporter.MSSQLAdapter\Transporter.MSSQLAdapter.csproj" />
+      <ProjectReference Include="Transporter.MSSQLDeleteAdapter\Transporter.MSSQLDeleteAdapter.csproj" />
     </ItemGroup>
 
 </Project>

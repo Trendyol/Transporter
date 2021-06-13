@@ -9,7 +9,7 @@ using Transporter.CouchbaseAdapter.Services.Interfaces;
 
 namespace Transporter.CouchbaseAdapter.Adapters
 {
-    public class CouchbaseSourceAdapter : ISourceAdapter
+    public class CouchbaseSourceAdapter : ISourceAdapter, IInsertable
     {
         private readonly ISourceService _sourceService;
         private readonly IConfiguration _configuration;
@@ -50,6 +50,11 @@ namespace Transporter.CouchbaseAdapter.Adapters
                 .ToObject<ICollection<CouchbaseJobSettings>>().ToList();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
             return (ICouchbaseSourceSettings) options.Source;
+        }
+
+        public async Task SetAsync(string data)
+        {
+            await _sourceService.SetTargetDataAsync(_settings, data);
         }
     }
 }

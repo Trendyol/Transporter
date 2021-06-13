@@ -39,6 +39,7 @@ namespace Transporter.MSSQLAdapter
         }
 
         public string Host { get; set; }
+        public bool IsInsertableOnFailure { get; set; }
     }
 
     public class MsSqlTargetSettings : ISqlTargetSettings
@@ -78,6 +79,7 @@ namespace Transporter.MSSQLAdapter
         public long BatchQuantity { get; set; }
         public string StatusIdColumnName { get; set; }
         public string IdColumn { get; set; }
+        public bool IsIdAutoIncrementOn { get; set; }
         public string Condition { get; set; }
     }
 
@@ -112,6 +114,7 @@ namespace Transporter.MSSQLAdapter
 
         public string StatusIdColumnName { get; set; }
         public string IdColumn { get; set; }
+        public bool IsIdAutoIncrementOn { get; set; }
         public string Condition { get; set; }
         public override string ToString()
         {
