@@ -7,6 +7,8 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
+      - run: ls
+      - run: pwd
       - uses: mr-smithers-excellent/docker-build-push@v5
         name: Build & push Docker image
         with:
@@ -15,7 +17,5 @@ jobs:
           registry: ghcr.io
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.GHCR_TOKEN }}
-          dockerfile: Dockerfile.ci
-          name: Transporter
-          run: echo ${{ steps.docker_build.outputs.digest }}
+          dockerfile: Dockerfile
           addLatest: true
