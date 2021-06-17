@@ -14,7 +14,7 @@ jobs:
       - uses: mr-smithers-excellent/docker-build-push@v5
         name: Build & push Docker image
         with:
-          image: ghcr.io/trendyol/transporter
+          image: trendyol/transporter
           tags: v1, latest
           registry: ghcr.io
           username: ${{ secrets.DOCKER_USERNAME }}
