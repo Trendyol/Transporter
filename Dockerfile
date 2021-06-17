@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build-env
 
 RUN apt-get update
 RUN apt-get install -qqy sqlite3 libsqlite3-dev
