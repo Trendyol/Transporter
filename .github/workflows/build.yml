@@ -9,8 +9,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         name: Check out code
-      - run: ls
-      - run: pwd
       - uses: mr-smithers-excellent/docker-build-push@v5
         name: Build & push Docker image
         with:
