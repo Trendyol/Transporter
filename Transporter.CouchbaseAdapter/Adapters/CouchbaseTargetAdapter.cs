@@ -46,8 +46,8 @@ namespace Transporter.CouchbaseAdapter.Adapters
 
         private ICouchbaseTargetSettings GetOptions(IJobSettings jobSettings)
         {
-            var jobOptionsList = _configuration[Constants.JobListSectionKey]
-                .ToObject<ICollection<CouchbaseJobSettings>>().ToList();
+            var jobOptionsList = _configuration.GetSection(Constants.JobListSectionKey)
+                .Get<List<CouchbaseJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
             return (ICouchbaseTargetSettings) options.Target;
         }

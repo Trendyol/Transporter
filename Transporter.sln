@@ -17,6 +17,8 @@ ProjectSection(SolutionItems) = preProject
 	Dockerfile = Dockerfile
 EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transporter.IntegrationTests", "Transporter.IntegrationTests\Transporter.IntegrationTests.csproj", "{994AB459-A736-4BAB-B14B-8876C7DADF81}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{798C08E9-DCCE-421C-AC68-59614D76D597}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{798C08E9-DCCE-421C-AC68-59614D76D597}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{798C08E9-DCCE-421C-AC68-59614D76D597}.Release|Any CPU.Build.0 = Release|Any CPU
+		{994AB459-A736-4BAB-B14B-8876C7DADF81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{994AB459-A736-4BAB-B14B-8876C7DADF81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{994AB459-A736-4BAB-B14B-8876C7DADF81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{994AB459-A736-4BAB-B14B-8876C7DADF81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{983A7445-5B4F-4A1D-A03C-A653C868FD5A} = {8838632F-DA8C-418C-9780-D8FE09103B16}

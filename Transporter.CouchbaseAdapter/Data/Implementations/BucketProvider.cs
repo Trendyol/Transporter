@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Couchbase;
 using Transporter.CouchbaseAdapter.Data.Interfaces;
@@ -8,21 +9,26 @@ namespace Transporter.CouchbaseAdapter.Data.Implementations
     public class BucketProvider : IBucketProvider
     {
         private readonly ICouchbaseProvider _couchbaseProvider;
-        private IBucket _bucket;
+        private readonly Dictionary<string, IBucket> _buckets = new();
 
         public BucketProvider(ICouchbaseProvider couchbaseProvider)
         {
             _couchbaseProvider = couchbaseProvider;
         }
 
-        public async Task<IBucket> GetBucket(ConnectionData connectionData, string bucket)
+        public async Task<IBucket> GetBucket(ConnectionData connectionData, string bucketName)
         {
-            if (_bucket != null) return _bucket;
+            if (_buckets.ContainsKey(bucketName))
+            {
+                return _buckets[bucketName];
+            }
 
             var cluster = await _couchbaseProvider.GetCluster(connectionData);
-            _bucket = await cluster.BucketAsync(bucket);
+            var bucket = await cluster.BucketAsync(bucketName);
 
-            return _bucket;
+            _buckets.Add(bucketName, bucket);
+
+            return bucket;
         }
     }
 }
