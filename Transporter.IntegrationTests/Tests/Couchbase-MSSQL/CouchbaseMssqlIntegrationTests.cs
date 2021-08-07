@@ -10,7 +10,7 @@ using Transporter.IntegrationTests.Helpers.Couchbase.Interfaces;
 using Transporter.IntegrationTests.Objects;
 using TransporterService;
 
-namespace Transporter.IntegrationTests.Tests
+namespace Transporter.IntegrationTests.Tests.Couchbase_MSSQL
 {
     public class CouchbaseMssqlIntegrationTests : IntegrationTestBase
     {
