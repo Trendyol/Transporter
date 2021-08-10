@@ -34,7 +34,18 @@ namespace Transporter.CouchbaseAdapter.Adapters
                 StringComparison.InvariantCultureIgnoreCase);
         }
 
+        public bool CanHandle(TemporaryTableOptions.ITemporaryTableJobSettings jobSetting)
+        {
+            var type = GetTypeBySettings(jobSetting);
+            return string.Equals(type, Utils.Constants.OptionsType, StringComparison.InvariantCultureIgnoreCase);
+        }
+
         public void SetOptions(IJobSettings jobSettings)
+        {
+            _settings = GetOptions(jobSettings);
+        }
+
+        public void SetOptions(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
         {
             _settings = GetOptions(jobSettings);
         }
@@ -42,6 +53,27 @@ namespace Transporter.CouchbaseAdapter.Adapters
         public async Task SetAsync(string data)
         {
             await _targetService.SetTargetDataAsync(_settings, data);
+        }
+
+        public async Task SetTemporaryTableAsync(string data, string dataSourceName)
+        {
+            await _targetService.SetTargetTemporaryDataAsync(_settings, data, dataSourceName);
+        }
+
+        private ICouchbaseTargetSettings GetOptions(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
+        {
+            var jobOptionsList = _configuration.GetSection(Constants.TemporaryJobListSectionKey)
+                .Get<List<CouchbaseJobSettings>>();
+            var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
+            return (ICouchbaseTargetSettings)options.Target;
+        }
+        
+        private string GetTypeBySettings(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
+        {
+            var jobOptionsList = _configuration.GetSection(Constants.TemporaryJobListSectionKey)
+                .Get<List<CouchbaseJobSettings>>();
+            var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
+            return options.Target?.Type;
         }
 
         private ICouchbaseTargetSettings GetOptions(IJobSettings jobSettings)

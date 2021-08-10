@@ -7,16 +7,16 @@ using Microsoft.Extensions.Logging;
 using Quartz;
 using Transporter.Core;
 
-namespace TransporterService
+namespace TransporterService.Jobs
 {
     [PersistJobDataAfterExecution]
     [DisallowConcurrentExecution]
-    public class CronJob : IJob
+    public class TransferJob : IJob
     {
         private readonly IAdapterFactory _adapterFactory;
-        private readonly ILogger<CronJob> _logger;
+        private readonly ILogger<TransferJob> _logger;
 
-        public CronJob(IAdapterFactory adapterFactory, ILogger<CronJob> logger)
+        public TransferJob(IAdapterFactory adapterFactory, ILogger<TransferJob> logger)
         {
             _adapterFactory = adapterFactory;
             _logger = logger;

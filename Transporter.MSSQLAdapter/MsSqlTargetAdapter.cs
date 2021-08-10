@@ -28,7 +28,18 @@ namespace Transporter.MSSQLAdapter
                 StringComparison.InvariantCultureIgnoreCase);
         }
 
+        public bool CanHandle(TemporaryTableOptions.ITemporaryTableJobSettings jobSetting)
+        {
+            var type = GetTypeBySettings(jobSetting);
+            return string.Equals(type, MsSqlAdapterConstants.OptionsType, StringComparison.InvariantCultureIgnoreCase);
+        }
+
         public void SetOptions(IJobSettings jobSettings)
+        {
+            _settings = GetOptions(jobSettings);
+        }
+
+        public void SetOptions(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
         {
             _settings = GetOptions(jobSettings);
         }
@@ -38,10 +49,22 @@ namespace Transporter.MSSQLAdapter
             await _targetService.SetTargetDataAsync(_settings, data);
         }
 
+        public async Task SetTemporaryTableAsync(string data, string dataSourceName)
+        {
+            await _targetService.SetTargetTemporaryDataAsync(_settings, data, dataSourceName);
+        }
+
         public virtual object Clone()
         {
             var result = MemberwiseClone() as IAdapter;
             return result;
+        }
+        
+        private ISqlTargetSettings GetOptions(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
+        {
+            var jobOptionsList = _configuration.GetSection(Constants.TemporaryJobListSectionKey).Get<List<MsSqlJobSettings>>();
+            var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
+            return (ISqlTargetSettings) options.Target;
         }
 
         private ISqlTargetSettings GetOptions(IJobSettings jobSettings)
@@ -49,6 +72,14 @@ namespace Transporter.MSSQLAdapter
             var jobOptionsList = _configuration.GetSection(Constants.JobListSectionKey).Get<List<MsSqlJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
             return (ISqlTargetSettings) options.Target;
+        }
+        
+        private string GetTypeBySettings(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
+        {
+            var jobOptionsList = _configuration.GetSection(Constants.TemporaryJobListSectionKey)
+                .Get<List<MsSqlJobSettings>>();
+            var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
+            return options.Target?.Type;
         }
     }
 }

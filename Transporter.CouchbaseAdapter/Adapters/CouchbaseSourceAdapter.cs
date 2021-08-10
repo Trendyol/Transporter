@@ -34,7 +34,18 @@ namespace Transporter.CouchbaseAdapter.Adapters
                 StringComparison.InvariantCultureIgnoreCase);
         }
 
+        public bool CanHandle(TemporaryTableOptions.ITemporaryTableJobSettings jobSetting)
+        {
+            var type = GetTypeBySettings(jobSetting);
+            return string.Equals(type, Utils.Constants.OptionsType, StringComparison.InvariantCultureIgnoreCase);
+        }
+
         public void SetOptions(IJobSettings jobSettings)
+        {
+            _settings = GetOptions(jobSettings);
+        }
+
+        public void SetOptions(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
         {
             _settings = GetOptions(jobSettings);
         }
@@ -44,12 +55,38 @@ namespace Transporter.CouchbaseAdapter.Adapters
             return await _sourceService.GetSourceDataAsync(_settings);
         }
 
+        public async Task<IEnumerable<dynamic>> GetIdDataAsync()
+        {
+            return await _sourceService.GetIdDataAsync(_settings);
+        }
+
+        public string GetDataSourceName()
+        {
+            return $"{_settings.Options.Bucket}";
+        }
+
         private ICouchbaseSourceSettings GetOptions(IJobSettings jobSettings)
         {
             var jobOptionsList = _configuration.GetSection(Constants.JobListSectionKey)
                 .Get<List<CouchbaseJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
-            return (ICouchbaseSourceSettings) options.Source;
+            return (ICouchbaseSourceSettings)options.Source;
+        }
+
+        private ICouchbaseSourceSettings GetOptions(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
+        {
+            var jobOptionsList = _configuration.GetSection(Constants.TemporaryJobListSectionKey)
+                .Get<List<CouchbaseJobSettings>>();
+            var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
+            return (ICouchbaseSourceSettings)options.Source;
+        }
+
+        private string GetTypeBySettings(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
+        {
+            var jobOptionsList = _configuration.GetSection(Constants.TemporaryJobListSectionKey)
+                .Get<List<CouchbaseJobSettings>>();
+            var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
+            return options.Source?.Type;
         }
 
         public async Task SetAsync(string data)

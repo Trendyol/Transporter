@@ -13,6 +13,7 @@ using Quartz;
 using Transporter.Core;
 using Transporter.CouchbaseAdapter;
 using Transporter.MSSQLAdapter;
+using TransporterService.Jobs;
 using ServiceRegisterer = Transporter.MSSQLDeleteAdapter.ServiceRegisterer;
 
 namespace TransporterService
@@ -57,17 +58,22 @@ namespace TransporterService
                         quartz.UseSimpleTypeLoader();
                         quartz.UseInMemoryStore();
                         quartz.UseDefaultThreadPool(tp => { tp.MaxConcurrency = 10; });
+                        
+                        // var jobOptionsList = hostContext.Configuration.GetSection(Constants.JobListSectionKey)
+                        //     .Get<List<JobSettings>>();
+                        var temporaryJobOptionsList = hostContext.Configuration
+                            .GetSection(Constants.TemporaryJobListSectionKey)
+                            .Get<List<TemporaryTableOptions.TemporaryTableJobSettings>>();
 
-                        // var jobOptionsList = hostContext.Configuration[Constants.JobListSectionKey]
-                        //     .ToObject<ICollection<JobSettings>>();
-                        var jobOptionsList = hostContext.Configuration.GetSection(Constants.JobListSectionKey)
-                            .Get<List<JobSettings>>();
-
-                        Console.Error.Write("jobOptionsList : " + jobOptionsList.ToJson());
+                        // Console.Error.Write("jobOptionsList : " + jobOptionsList.ToJson());
                         Console.Error.Write("hostContext : " +
                                             hostContext.Configuration[Constants.JobListSectionKey]);
 
-                        jobOptionsList.ToList().ForEach(jobOptions => { InitializeQuartzJobs(quartz, jobOptions); });
+                        // jobOptionsList.ToList().ForEach(jobOptions => { InitializeQuartzJobs(quartz, jobOptions); });
+                        temporaryJobOptionsList.ToList().ForEach(jobOptions =>
+                        {
+                            InitializeQuartzJobsForTemporaryTable(quartz, jobOptions);
+                        });
                     });
 
                     // Quartz.Extensions.Hosting hosting
@@ -82,11 +88,33 @@ namespace TransporterService
         private static void InitializeQuartzJobs(IServiceCollectionQuartzConfigurator quartzConfigurator,
             JobSettings jobSettings)
         {
-            var jobDataMap = new JobDataMap((IDictionary) new Dictionary<string, object>
-                {{"jobSettings", jobSettings}});
+            var jobDataMap = new JobDataMap((IDictionary)new Dictionary<string, object>
+                { { "jobSettings", jobSettings } });
             var jobKey = new JobKey(jobSettings.Name, jobSettings.Source.ToString());
 
-            quartzConfigurator.AddJob<CronJob>(j => j
+            quartzConfigurator.AddJob<TransferJob>(j => j
+                .StoreDurably()
+                .WithIdentity(jobKey)
+                .WithDescription($"{jobSettings.Name} {jobSettings.Source} => {jobSettings.Target}")
+                .UsingJobData(jobDataMap)
+            );
+
+            quartzConfigurator.AddTrigger(t => t
+                .WithIdentity($"{jobKey} Cron Trigger")
+                .WithCronSchedule(jobSettings.Cron)
+                .ForJob(jobKey)
+                .StartNow());
+        }
+
+        private static void InitializeQuartzJobsForTemporaryTable(
+            IServiceCollectionQuartzConfigurator quartzConfigurator,
+            TemporaryTableOptions.TemporaryTableJobSettings jobSettings)
+        {
+            var jobDataMap = new JobDataMap((IDictionary)new Dictionary<string, object>
+                { { "jobSettingsForTemporaryTable", jobSettings } });
+            var jobKey = new JobKey(jobSettings.Name, jobSettings.Source.ToString());
+
+            quartzConfigurator.AddJob<TransferTemporaryJob>(j => j
                 .StoreDurably()
                 .WithIdentity(jobKey)
                 .WithDescription($"{jobSettings.Name} {jobSettings.Source} => {jobSettings.Target}")

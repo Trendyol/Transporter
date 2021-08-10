@@ -25,6 +25,15 @@ namespace Transporter.MSSQLAdapter.Services
             var result = await connection.QueryAsync<dynamic>(query);
             return result;
         }
+        
+        public async Task<IEnumerable<dynamic>> GetIdDataAsync(ISqlSourceSettings settings)
+        {
+            using var connection =
+                _dbConnectionFactory.GetConnection(settings.Options.ConnectionString);
+            var query = await GetSourceIdDataQueryAsync(settings);
+            var result = await connection.QueryAsync<dynamic>(query);
+            return result;
+        }
 
         public async Task SetSourceDataAsync(ISqlSourceSettings setting, string data)
         {
@@ -76,14 +85,19 @@ namespace Transporter.MSSQLAdapter.Services
             var query = new StringBuilder();
             query.AppendLine($"DELETE TOP({sqlOptions.BatchQuantity}) FROM {sqlOptions.Schema}.{sqlOptions.Table}");
             query.AppendLine("OUTPUT DELETED.*");
-            SetSourceDataConditions(query, sqlOptions);
+            query.AppendLine($"WHERE ({(string.IsNullOrEmpty(sqlOptions.Condition) ? "1=1" : sqlOptions.Condition)})");
 
             return await Task.FromResult(query.ToString());
         }
-
-        private void SetSourceDataConditions(StringBuilder query, IMsSqlSourceOptions sqlOptions)
+        
+        private async Task<string> GetSourceIdDataQueryAsync(ISqlSourceSettings settings)
         {
+            var sqlOptions = settings.Options;
+            var query = new StringBuilder();
+            query.AppendLine($"SELECT TOP({sqlOptions.BatchQuantity}) {sqlOptions.IdColumn} FROM {sqlOptions.Schema}.{sqlOptions.Table}");
             query.AppendLine($"WHERE ({(string.IsNullOrEmpty(sqlOptions.Condition) ? "1=1" : sqlOptions.Condition)})");
+
+            return await Task.FromResult(query.ToString());
         }
     }
 }

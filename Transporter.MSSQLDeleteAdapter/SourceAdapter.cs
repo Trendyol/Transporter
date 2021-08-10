@@ -28,14 +28,35 @@ namespace Transporter.MSSQLDeleteAdapter
                 StringComparison.InvariantCultureIgnoreCase);
         }
 
+        public bool CanHandle(TemporaryTableOptions.ITemporaryTableJobSettings jobSetting)
+        {
+            var type = GetTypeBySettings(jobSetting);
+            return string.Equals(type, Constants.OptionsType, StringComparison.InvariantCultureIgnoreCase);
+        }
+
         public void SetOptions(IJobSettings jobSettings)
         {
             _settings = GetOptions(jobSettings);
         }
 
+        public void SetOptions(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<IEnumerable<dynamic>> GetAsync()
         {
             return await _sourceService.GetSourceDataAsync(_settings);
+        }
+
+        public Task<IEnumerable<dynamic>> GetIdDataAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetDataSourceName()
+        {
+            return $"{_settings.Options.Schema}.{_settings.Options.Table}";
         }
 
         public virtual object Clone()
@@ -50,6 +71,14 @@ namespace Transporter.MSSQLDeleteAdapter
                 .ToObject<ICollection<MsSqlJobSettings>>().ToList();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
             return (ISqlSourceSettings) options.Source;
+        }
+
+        private string GetTypeBySettings(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
+        {
+            var jobOptionsList = _configuration.GetSection(Core.Constants.TemporaryJobListSectionKey)
+                .Get<List<MsSqlJobSettings>>();
+            var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
+            return options.Source?.Type;
         }
     }
 }

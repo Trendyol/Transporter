@@ -23,6 +23,26 @@ namespace Transporter.Core
             adapter.SetOptions(options);
             return adapter;
         }
+        
+        public async Task<T> GetAsync<T>(TemporaryTableOptions.TemporaryTableJobSettings options) where T : IAdapter
+        {
+            var adapter = await GetAdapterAsync<T>(options);
+            if (adapter is null) return default;
+            adapter.SetOptions(options);
+            return adapter;
+        }
+        
+        private async Task<T> GetAdapterAsync<T>(TemporaryTableOptions.TemporaryTableJobSettings options) where T : IAdapter
+        {
+            var properAdapter = default(T);
+            if (typeof(T) == typeof(ITargetAdapter))
+                properAdapter = (T) _targetAdapters.FirstOrDefault(x => x.CanHandle(options));
+
+            if (typeof(T) == typeof(ISourceAdapter))
+                properAdapter = (T) _sourceAdapters.FirstOrDefault(x => x.CanHandle(options));
+
+            return (T) await Task.Run(() => properAdapter?.Clone());
+        }
 
         private async Task<T> GetAdapterAsync<T>(JobSettings options) where T : IAdapter
         {

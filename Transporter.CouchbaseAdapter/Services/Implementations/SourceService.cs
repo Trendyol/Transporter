@@ -35,6 +35,17 @@ namespace Transporter.CouchbaseAdapter.Services.Implementations
             return list;
         }
         
+        public async Task<IEnumerable<dynamic>> GetIdDataAsync(ICouchbaseSourceSettings settings)
+        {
+            var cluster = await _couchbaseProvider.GetCluster(settings.Options.ConnectionData);
+            var query = await GetSourceIdDataQueryAsync(settings);
+            
+            var result = await cluster.QueryAsync<dynamic>(query);
+            var list = await TransformQueryResultToList(result);
+
+            return list;
+        }
+        
         public async Task SetTargetDataAsync(ICouchbaseSourceSettings settings, string data)
         {
             var insertDataItems = data.ToObject<List<dynamic>>();
@@ -87,6 +98,17 @@ namespace Transporter.CouchbaseAdapter.Services.Implementations
         {
             var options = settings.Options;
             var query = BuildQuery(settings, options);
+
+            return await Task.FromResult(query.ToString());
+        }
+        
+        private async Task<string> GetSourceIdDataQueryAsync(ICouchbaseSourceSettings settings)
+        {
+            var options = settings.Options;
+            var query = new StringBuilder();
+            query.AppendLine($"SELECT meta().id FROM {options.Bucket} b");
+            query.AppendLine($"WHERE ({(string.IsNullOrEmpty(options.Condition) ? "1=1" : options.Condition)})");
+            query.AppendLine($"LIMIT {settings.Options.BatchQuantity}");
 
             return await Task.FromResult(query.ToString());
         }

@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Couchbase;
+using Couchbase.Core.Exceptions.KeyValue;
 using Couchbase.KeyValue;
 using Transporter.Core;
 using Transporter.CouchbaseAdapter.ConfigOptions.Target.Interfaces;
@@ -33,6 +35,57 @@ namespace Transporter.CouchbaseAdapter.Services.Implementations
             var tasks = await InsertItems(settings, insertDataItems, dataItemIds);
 
             await Task.WhenAll(tasks);
+        }
+
+        public async Task SetTargetTemporaryDataAsync(ICouchbaseTargetSettings settings, string data,
+            string dataSourceName)
+        {
+            var dataItemIds = data.ToObject<List<IdObject>>();
+            var insertDataItems = dataItemIds.Select(SelectTemporaryTableDataFromId(dataSourceName)).ToList();
+
+            if (!insertDataItems.Any())
+            {
+                return;
+            }
+
+            try
+            {
+                var tasks = await InsertItems(settings, insertDataItems, dataItemIds);
+                await Task.WhenAll(tasks);
+            }
+            catch (DocumentExistsException)
+            {
+            }
+        }
+
+        private static Func<IdObject, TemporaryTable> SelectTemporaryTableDataFromId(string dataSourceName)
+        {
+            return dataItemId => CreateTemporaryTableData(dataSourceName, dataItemId);
+        }
+
+        private static TemporaryTable CreateTemporaryTableData(string dataSourceName, IdObject dataItemId)
+        {
+            return new TemporaryTable
+            {
+                Id = dataItemId.Id,
+                Lmd = DateTime.Now,
+                DataSourceName = dataSourceName
+            };
+        }
+
+        private async Task<List<Task<IMutationResult>>> InsertItems(ICouchbaseTargetSettings settings,
+            List<TemporaryTable> insertDataItems, List<IdObject> dataItemIds)
+        {
+            var collection = await GetCollectionAsync(settings.Options.ConnectionData, settings.Options.Bucket);
+            var tasks = new List<Task<IMutationResult>>();
+
+            for (var i = 0; i < insertDataItems.Count; i++)
+            {
+                var task = collection.InsertAsync(dataItemIds[i].Id, insertDataItems[i]);
+                tasks.Add(task);
+            }
+
+            return tasks;
         }
 
         private async Task<List<Task<IMutationResult>>> InsertItems(ICouchbaseTargetSettings settings,
