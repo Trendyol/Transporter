@@ -50,7 +50,7 @@ namespace Transporter.CouchbaseAdapter.Services.Implementations
 
             try
             {
-                var tasks = await InsertItems(settings, insertDataItems, dataItemIds);
+                var tasks = await InsertItems(settings, insertDataItems, dataItemIds, dataSourceName);
                 await Task.WhenAll(tasks);
             }
             catch (DocumentExistsException)
@@ -74,14 +74,14 @@ namespace Transporter.CouchbaseAdapter.Services.Implementations
         }
 
         private async Task<List<Task<IMutationResult>>> InsertItems(ICouchbaseTargetSettings settings,
-            List<TemporaryTable> insertDataItems, List<IdObject> dataItemIds)
+            List<TemporaryTable> insertDataItems, List<IdObject> dataItemIds, string dataSourceName)
         {
             var collection = await GetCollectionAsync(settings.Options.ConnectionData, settings.Options.Bucket);
             var tasks = new List<Task<IMutationResult>>();
 
             for (var i = 0; i < insertDataItems.Count; i++)
             {
-                var task = collection.InsertAsync(dataItemIds[i].Id, insertDataItems[i]);
+                var task = collection.InsertAsync($"{dataItemIds[i].Id}_{dataSourceName}", insertDataItems[i]);
                 tasks.Add(task);
             }
 

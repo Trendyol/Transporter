@@ -89,7 +89,10 @@ namespace Transporter.MSSQLAdapter.Services
         {
             var queryData = insertData.ToList();
             var query = new StringBuilder();
-            query.Append($"INSERT INTO {setting.Options.Schema}.{setting.Options.Table}");
+            query.Append(
+                $"IF NOT EXISTS (SELECT Id FROM {setting.Options.Schema}.{setting.Options.Table} WHERE Id = @Id " +
+                "AND DataSourceName = @DataSourceName) ");
+            query.AppendLine($"INSERT INTO {setting.Options.Schema}.{setting.Options.Table}");
             query.AppendLine(" (" + string.Join(',', queryData.Select(x => x.Key)));
             query.AppendLine(" ) VALUES (");
             query.AppendLine(string.Join(',', queryData.Select(x => $"@{x.Key}")));
