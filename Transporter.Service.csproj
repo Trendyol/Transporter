@@ -55,6 +55,7 @@
       <Compile Remove="Transporter.MSSQLAdapter\**" />
       <Compile Remove="Transporter.CouchbaseAdapter\**" />
       <Compile Remove="Transporter.MSSQLDeleteAdapter\**" />
+      <Compile Remove="Transporter.IntegrationTests\**" />
     </ItemGroup>
 
     <ItemGroup>
@@ -62,6 +63,7 @@
       <EmbeddedResource Remove="Transporter.MSSQLAdapter\**" />
       <EmbeddedResource Remove="Transporter.CouchbaseAdapter\**" />
       <EmbeddedResource Remove="Transporter.MSSQLDeleteAdapter\**" />
+      <EmbeddedResource Remove="Transporter.IntegrationTests\**" />
     </ItemGroup>
 
     <ItemGroup>
@@ -69,6 +71,10 @@
       <None Remove="Transporter.MSSQLAdapter\**" />
       <None Remove="Transporter.CouchbaseAdapter\**" />
       <None Remove="Transporter.MSSQLDeleteAdapter\**" />
+      <None Remove="Transporter.IntegrationTests\**" />
+      <None Update="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>

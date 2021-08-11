@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -29,43 +30,44 @@ namespace TransporterService
                 .ConfigureServices((hostContext, services) =>
                 {
                     ConfigureLogger(hostContext, services);
-                    
+
                     services.TransporterMsSqlAdapterRegister();
                     services.TransporterCouchbaseAdapterRegister();
                     ServiceRegisterer.TransporterMsSqlDeleteAdapterRegister(services);
-                    
+
                     services.Configure<QuartzOptions>(hostContext.Configuration.GetSection("Quartz"));
                     services.AddSingleton<IAdapterFactory, AdapterFactory>();
 
-                    services.AddQuartz(q =>
+                    services.AddQuartz(quartz =>
                     {
                         // handy when part of cluster or you want to otherwise identify multiple schedulers
-                        q.SchedulerId = "Scheduler-Core";
+                        quartz.SchedulerId = "Scheduler-Core";
 
                         // we take this from appsettings.json, just show it's possible
                         // q.SchedulerName = "Quartz ASP.NET Core Sample Scheduler";
                         // we could leave DI configuration intact and then jobs need to have public no-arg constructor
                         // the MS DI is expected to produce transient job instances 
-                        
-                        q.UseMicrosoftDependencyInjectionJobFactory(options =>
+
+                        quartz.UseMicrosoftDependencyInjectionJobFactory(options =>
                         {
                             // if we don't have the job in DI, allow fallback to configure via default constructor
                             options.AllowDefaultConstructor = false;
                         });
-                        
-                        q.UseSimpleTypeLoader();
-                        q.UseInMemoryStore();
-                        q.UseDefaultThreadPool(tp => { tp.MaxConcurrency = 10; });
 
+                        quartz.UseSimpleTypeLoader();
+                        quartz.UseInMemoryStore();
+                        quartz.UseDefaultThreadPool(tp => { tp.MaxConcurrency = 10; });
 
-                        var jobOptionsList = hostContext.Configuration[Constants.JobListSectionKey]
-                            .ToObject<ICollection<JobSettings>>();
+                        // var jobOptionsList = hostContext.Configuration[Constants.JobListSectionKey]
+                        //     .ToObject<ICollection<JobSettings>>();
+                        var jobOptionsList = hostContext.Configuration.GetSection(Constants.JobListSectionKey)
+                            .Get<List<JobSettings>>();
 
                         Console.Error.Write("jobOptionsList : " + jobOptionsList.ToJson());
                         Console.Error.Write("hostContext : " +
                                             hostContext.Configuration[Constants.JobListSectionKey]);
-                        
-                        jobOptionsList.ToList().ForEach(jobOptions => { InitializeQuartzJobs(q, jobOptions); });
+
+                        jobOptionsList.ToList().ForEach(jobOptions => { InitializeQuartzJobs(quartz, jobOptions); });
                     });
 
                     // Quartz.Extensions.Hosting hosting

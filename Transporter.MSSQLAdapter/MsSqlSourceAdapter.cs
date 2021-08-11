@@ -32,7 +32,7 @@ namespace Transporter.MSSQLAdapter
         {
             _settings = GetOptions(jobSettings);
         }
-        
+
         public async Task SetAsync(string data)
         {
             await _sourceService.SetSourceDataAsync(_settings, data);
@@ -51,8 +51,7 @@ namespace Transporter.MSSQLAdapter
 
         private ISqlSourceSettings GetOptions(IJobSettings jobSettings)
         {
-            var jobOptionsList = _configuration[Constants.JobListSectionKey].ToObject<ICollection<MsSqlJobSettings>>()
-                .ToList();
+            var jobOptionsList = _configuration.GetSection(Constants.JobListSectionKey).Get<List<MsSqlJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
             return (ISqlSourceSettings) options.Source;
         }

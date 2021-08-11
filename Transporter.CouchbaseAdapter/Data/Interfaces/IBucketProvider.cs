@@ -6,6 +6,6 @@ namespace Transporter.CouchbaseAdapter.Data.Interfaces
 {
     public interface IBucketProvider
     {
-        Task<IBucket> GetBucket(ConnectionData connectionData, string bucket);
+        Task<IBucket> GetBucket(ConnectionData connectionData, string bucketName);
     }
 }
