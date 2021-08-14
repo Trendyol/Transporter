@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -50,7 +52,19 @@ namespace Transporter.MSSQLAdapter.Services
 
             using var connection = _dbConnectionFactory.GetConnection(setting.Options.ConnectionString);
             var query = await GetTargetInsertIdDataQueryAsync(setting, upperCasedInsertData.FirstOrDefault());
-            await connection.ExecuteAsync(query, parameters);
+            await ExecuteQueryWithParameters(connection, query, parameters);
+        }
+
+        private static async Task ExecuteQueryWithParameters(IDbConnection connection, string query, List<DynamicParameters> parameters)
+        {
+            try
+            {
+                await connection.ExecuteAsync(query, parameters);
+            }
+            catch (SqlException e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         private static Func<Dictionary<string, string>, Dictionary<string, string>> ConvertDictionaryKeysToUpperCase()
