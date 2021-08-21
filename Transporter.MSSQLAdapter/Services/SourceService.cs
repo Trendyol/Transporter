@@ -17,15 +17,24 @@ namespace Transporter.MSSQLAdapter.Services
             _dbConnectionFactory = dbConnectionFactory;
         }
 
-        public async Task<IEnumerable<dynamic>> GetSourceDataAsync(ISqlSourceSettings settings)
+        public async Task<IEnumerable<dynamic>> GetSourceDataAsync(ISqlSourceSettings settings, IEnumerable<dynamic> ids)
         {
             using var connection =
                 _dbConnectionFactory.GetConnection(settings.Options.ConnectionString);
-            var query = await GetSourceQueryAsync(settings);
+            var query = await GetSourceQueryAsync(settings, ids);
             var result = await connection.QueryAsync<dynamic>(query);
+            
             return result;
         }
-        
+
+        public async Task DeleteDataByListOfIdsAsync(ISqlSourceSettings settings, IEnumerable<dynamic> ids)
+        {
+            using var connection =
+                _dbConnectionFactory.GetConnection(settings.Options.ConnectionString);
+            var query = await GetDeleteQueryAsync(settings, ids);
+            await connection.QueryAsync<dynamic>(query);
+        }
+
         public async Task<IEnumerable<dynamic>> GetIdDataAsync(ISqlSourceSettings settings)
         {
             using var connection =
@@ -79,13 +88,22 @@ namespace Transporter.MSSQLAdapter.Services
             return await Task.FromResult(query.ToString());
         }
 
-        private async Task<string> GetSourceQueryAsync(ISqlSourceSettings settings)
+        private async Task<string> GetSourceQueryAsync(ISqlSourceSettings settings, IEnumerable<dynamic> ids)
         {
             var sqlOptions = settings.Options;
             var query = new StringBuilder();
-            query.AppendLine($"DELETE TOP({sqlOptions.BatchQuantity}) FROM {sqlOptions.Schema}.{sqlOptions.Table}");
-            query.AppendLine("OUTPUT DELETED.*");
-            query.AppendLine($"WHERE ({(string.IsNullOrEmpty(sqlOptions.Condition) ? "1=1" : sqlOptions.Condition)})");
+            query.AppendLine($"SELECT * FROM {sqlOptions.Schema}.{sqlOptions.Table}");
+            query.AppendLine($"WHERE {settings.Options.IdColumn} IN ({string.Join(',', ids)})");
+
+            return await Task.FromResult(query.ToString());
+        }
+        
+        private async Task<string> GetDeleteQueryAsync(ISqlSourceSettings settings, IEnumerable<dynamic> ids)
+        {
+            var sqlOptions = settings.Options;
+            var query = new StringBuilder();
+            query.AppendLine($"DELETE FROM {sqlOptions.Schema}.{sqlOptions.Table}");
+            query.AppendLine($"WHERE {settings.Options.IdColumn} IN ({string.Join(',', ids)})");
 
             return await Task.FromResult(query.ToString());
         }

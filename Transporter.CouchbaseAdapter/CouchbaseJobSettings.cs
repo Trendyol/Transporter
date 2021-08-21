@@ -1,4 +1,5 @@
 using Transporter.Core;
+using Transporter.CouchbaseAdapter.ConfigOptions.Interim.Implementations;
 using Transporter.CouchbaseAdapter.ConfigOptions.Source.Implementations;
 using Transporter.CouchbaseAdapter.ConfigOptions.Target.Implementations;
 
@@ -10,12 +11,14 @@ namespace Transporter.CouchbaseAdapter
         {
             Source = new CouchbaseSourceSettings();
             Target = new CouchbaseTargetSettings();
+            Interim = new CouchbaseInterimSettings();
         }
 
         public string Name { get; set; }
         public string Cron { get; set; }
         public ISourceOptions Source { get; set; }
         public ITargetOptions Target { get; set; }
+        public IInterimOptions Interim { get; set; }
 
         public override string ToString()
         {

@@ -59,8 +59,8 @@ namespace TransporterService
                         quartz.UseInMemoryStore();
                         quartz.UseDefaultThreadPool(tp => { tp.MaxConcurrency = 10; });
                         
-                        // var jobOptionsList = hostContext.Configuration.GetSection(Constants.JobListSectionKey)
-                        //     .Get<List<JobSettings>>();
+                        var jobOptionsList = hostContext.Configuration.GetSection(Constants.JobListSectionKey)
+                        .Get<List<JobSettings>>();
                         var temporaryJobOptionsList = hostContext.Configuration
                             .GetSection(Constants.TemporaryJobListSectionKey)
                             .Get<List<TemporaryTableOptions.TemporaryTableJobSettings>>();
@@ -69,7 +69,7 @@ namespace TransporterService
                         Console.Error.Write("hostContext : " +
                                             hostContext.Configuration[Constants.JobListSectionKey]);
 
-                        // jobOptionsList.ToList().ForEach(jobOptions => { InitializeQuartzJobs(quartz, jobOptions); });
+                        jobOptionsList.ToList().ForEach(jobOptions => { InitializeQuartzJobs(quartz, jobOptions); });
                         temporaryJobOptionsList.ToList().ForEach(jobOptions =>
                         {
                             InitializeQuartzJobsForTemporaryTable(quartz, jobOptions);

@@ -32,9 +32,14 @@ namespace Transporter.CouchbaseAdapter.Services.Implementations
                 return;
             }
 
-            var tasks = await InsertItems(settings, insertDataItems, dataItemIds);
-
-            await Task.WhenAll(tasks);
+            try
+            {
+                var tasks = await InsertItems(settings, insertDataItems, dataItemIds);
+                await Task.WhenAll(tasks);
+            }
+            catch (DocumentExistsException)
+            {
+            }
         }
 
         public async Task SetTargetTemporaryDataAsync(ICouchbaseTargetSettings settings, string data,
@@ -58,14 +63,14 @@ namespace Transporter.CouchbaseAdapter.Services.Implementations
             }
         }
 
-        private static Func<IdObject, TemporaryTable> SelectTemporaryTableDataFromId(string dataSourceName)
+        private static Func<IdObject, InterimTable> SelectTemporaryTableDataFromId(string dataSourceName)
         {
             return dataItemId => CreateTemporaryTableData(dataSourceName, dataItemId);
         }
 
-        private static TemporaryTable CreateTemporaryTableData(string dataSourceName, IdObject dataItemId)
+        private static InterimTable CreateTemporaryTableData(string dataSourceName, IdObject dataItemId)
         {
-            return new TemporaryTable
+            return new InterimTable
             {
                 Id = dataItemId.Id,
                 Lmd = DateTime.Now,
@@ -74,7 +79,7 @@ namespace Transporter.CouchbaseAdapter.Services.Implementations
         }
 
         private async Task<List<Task<IMutationResult>>> InsertItems(ICouchbaseTargetSettings settings,
-            List<TemporaryTable> insertDataItems, List<IdObject> dataItemIds, string dataSourceName)
+            List<InterimTable> insertDataItems, List<IdObject> dataItemIds, string dataSourceName)
         {
             var collection = await GetCollectionAsync(settings.Options.ConnectionData, settings.Options.Bucket);
             var tasks = new List<Task<IMutationResult>>();

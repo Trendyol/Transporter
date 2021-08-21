@@ -16,8 +16,10 @@ namespace Transporter.CouchbaseAdapter
             builder.AddTransient<IBucketProvider, BucketProvider>();
             builder.AddTransient<ISourceService, SourceService>();
             builder.AddTransient<ITargetService, TargetService>();
+            builder.AddTransient<IInterimService, InterimService>();
             builder.AddTransient<ISourceAdapter, CouchbaseSourceAdapter>();
             builder.AddTransient<ITargetAdapter, CouchbaseTargetAdapter>();
+            builder.AddTransient<IInterimAdapter, CouchbaseInterimAdapter>();
         }
     }
 }

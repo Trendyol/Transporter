@@ -14,12 +14,14 @@ namespace Transporter.Core
         {
             Source = new SourceOptions();
             Target = new TargetOptions();
+            Interim = new InterimOptions();
         }
 
         public string Name { get; set; }
         public string Cron { get; set; }
         public ISourceOptions Source { get; set; }
         public ITargetOptions Target { get; set; }
+        public IInterimOptions Interim { get; set; }
 
         public override string ToString()
         {
@@ -55,5 +57,16 @@ namespace Transporter.Core
     {
         public string Type { get; set; }
         public string Host { get; set; }
+    }
+
+    public interface IInterimOptions : IOptions
+    {
+        public string Host { get; set; }
+    }
+    
+    public class InterimOptions : IInterimOptions
+    {
+        public string Host { get; set; }
+        public string Type { get; set; }
     }
 }

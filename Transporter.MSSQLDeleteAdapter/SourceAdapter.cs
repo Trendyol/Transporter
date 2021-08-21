@@ -49,6 +49,16 @@ namespace Transporter.MSSQLDeleteAdapter
             return await _sourceService.GetSourceDataAsync(_settings);
         }
 
+        public Task<IEnumerable<dynamic>> GetAsync(IEnumerable<dynamic> ids)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteAsync(IEnumerable<dynamic> ids)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<IEnumerable<dynamic>> GetIdDataAsync()
         {
             throw new NotImplementedException();

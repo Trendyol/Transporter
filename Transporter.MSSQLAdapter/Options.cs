@@ -77,7 +77,6 @@ namespace Transporter.MSSQLAdapter
         public string Schema { get; set; }
         public string ConnectionString { get; set; }
         public long BatchQuantity { get; set; }
-        public string StatusIdColumnName { get; set; }
         public string IdColumn { get; set; }
         public bool IsIdAutoIncrementOn { get; set; }
         public string Condition { get; set; }

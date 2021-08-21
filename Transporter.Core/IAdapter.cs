@@ -20,8 +20,15 @@ namespace Transporter.Core
 
     public interface ISourceAdapter : IAdapter
     {
-        Task<IEnumerable<dynamic>> GetAsync();
+        Task<IEnumerable<dynamic>> GetAsync(IEnumerable<dynamic> ids);
+        Task DeleteAsync(IEnumerable<dynamic> ids);
         Task<IEnumerable<dynamic>> GetIdDataAsync();
         string GetDataSourceName();
+    }
+
+    public interface IInterimAdapter : IAdapter
+    {
+        Task<IEnumerable<dynamic>> GetAsync();
+        Task DeleteAsync(IEnumerable<dynamic> ids);
     }
 }

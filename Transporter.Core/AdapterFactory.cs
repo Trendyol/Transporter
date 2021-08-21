@@ -8,12 +8,14 @@ namespace Transporter.Core
     {
         private readonly IEnumerable<ISourceAdapter> _sourceAdapters;
         private readonly IEnumerable<ITargetAdapter> _targetAdapters;
+        private readonly IEnumerable<IInterimAdapter> _interimAdapters;
 
         public AdapterFactory(IEnumerable<ISourceAdapter> sourceAdapters,
-            IEnumerable<ITargetAdapter> targetAdapters)
+            IEnumerable<ITargetAdapter> targetAdapters, IEnumerable<IInterimAdapter> interimAdapters)
         {
             _sourceAdapters = sourceAdapters;
             _targetAdapters = targetAdapters;
+            _interimAdapters = interimAdapters;
         }
 
         public async Task<T> GetAsync<T>(JobSettings options) where T : IAdapter
@@ -52,6 +54,9 @@ namespace Transporter.Core
 
             if (typeof(T) == typeof(ISourceAdapter))
                 properAdapter = (T) _sourceAdapters.FirstOrDefault(x => x.CanHandle(options));
+            
+            if (typeof(T) == typeof(IInterimAdapter))
+                properAdapter = (T) _interimAdapters.FirstOrDefault(x => x.CanHandle(options));
 
             return (T) await Task.Run(() => properAdapter?.Clone());
         }

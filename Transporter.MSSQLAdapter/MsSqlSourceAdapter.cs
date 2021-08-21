@@ -50,9 +50,14 @@ namespace Transporter.MSSQLAdapter
             await _sourceService.SetSourceDataAsync(_settings, data);
         }
 
-        public async Task<IEnumerable<dynamic>> GetAsync()
+        public async Task<IEnumerable<dynamic>> GetAsync(IEnumerable<dynamic> ids)
         {
-            return await _sourceService.GetSourceDataAsync(_settings);
+            return await _sourceService.GetSourceDataAsync(_settings, ids);
+        }
+        
+        public async Task DeleteAsync(IEnumerable<dynamic> ids)
+        {
+            await _sourceService.DeleteDataByListOfIdsAsync(_settings, ids);
         }
         
         public string GetDataSourceName()

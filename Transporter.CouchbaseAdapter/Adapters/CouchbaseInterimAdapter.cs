@@ -4,21 +4,21 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Transporter.Core;
-using Transporter.CouchbaseAdapter.ConfigOptions.Source.Interfaces;
+using Transporter.CouchbaseAdapter.ConfigOptions.Interim.Interfaces;
 using Transporter.CouchbaseAdapter.Services.Interfaces;
 
 namespace Transporter.CouchbaseAdapter.Adapters
 {
-    public class CouchbaseSourceAdapter : ISourceAdapter, IInsertable
+    public class CouchbaseInterimAdapter : IInterimAdapter
     {
-        private readonly ISourceService _sourceService;
         private readonly IConfiguration _configuration;
-        private ICouchbaseSourceSettings _settings;
+        private readonly IInterimService _interimService;
+        private ICouchbaseInterimSettings _settings;
 
-        public CouchbaseSourceAdapter(ISourceService sourceService, IConfiguration configuration)
+        public CouchbaseInterimAdapter(IConfiguration configuration, IInterimService interimService)
         {
-            _sourceService = sourceService;
             _configuration = configuration;
+            _interimService = interimService;
         }
 
         public object Clone()
@@ -52,45 +52,28 @@ namespace Transporter.CouchbaseAdapter.Adapters
 
         public async Task<IEnumerable<dynamic>> GetAsync()
         {
-            return await _sourceService.GetSourceDataAsync(_settings);
+            return await _interimService.GetInterimDataAsync(_settings);
         }
-
-        public Task<IEnumerable<dynamic>> GetAsync(IEnumerable<dynamic> ids)
+        
+        public async Task DeleteAsync(IEnumerable<dynamic> ids)
         {
-            // throw new NotImplementedException();
-            return null;
+            await _interimService.DeleteAsync(_settings, ids);
         }
 
-        public Task DeleteAsync(IEnumerable<dynamic> ids)
-        {
-            // throw new NotImplementedException();
-            return Task.CompletedTask;
-        }
-
-        public async Task<IEnumerable<dynamic>> GetIdDataAsync()
-        {
-            return await _sourceService.GetIdDataAsync(_settings);
-        }
-
-        public string GetDataSourceName()
-        {
-            return $"{_settings.Options.Bucket}";
-        }
-
-        private ICouchbaseSourceSettings GetOptions(IJobSettings jobSettings)
+        private ICouchbaseInterimSettings GetOptions(IJobSettings jobSettings)
         {
             var jobOptionsList = _configuration.GetSection(Constants.JobListSectionKey)
                 .Get<List<CouchbaseJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
-            return (ICouchbaseSourceSettings)options.Source;
+            return (ICouchbaseInterimSettings)options.Interim;
         }
 
-        private ICouchbaseSourceSettings GetOptions(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
+        private ICouchbaseInterimSettings GetOptions(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
         {
             var jobOptionsList = _configuration.GetSection(Constants.TemporaryJobListSectionKey)
                 .Get<List<CouchbaseJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
-            return (ICouchbaseSourceSettings)options.Source;
+            return (ICouchbaseInterimSettings)options.Interim;
         }
 
         private string GetTypeBySettings(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
@@ -98,12 +81,7 @@ namespace Transporter.CouchbaseAdapter.Adapters
             var jobOptionsList = _configuration.GetSection(Constants.TemporaryJobListSectionKey)
                 .Get<List<CouchbaseJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
-            return options.Source?.Type;
-        }
-
-        public async Task SetAsync(string data)
-        {
-            await _sourceService.SetTargetDataAsync(_settings, data);
+            return options.Interim?.Type;
         }
     }
 }
