@@ -8,10 +8,10 @@ using Couchbase.Query;
 using Transporter.Core;
 using Transporter.CouchbaseAdapter.ConfigOptions.Source.Interfaces;
 using Transporter.CouchbaseAdapter.Data.Interfaces;
-using Transporter.CouchbaseAdapter.Services.Interfaces;
+using Transporter.CouchbaseAdapter.Services.Source.Interfaces;
 using Transporter.CouchbaseAdapter.Utils;
 
-namespace Transporter.CouchbaseAdapter.Services.Implementations
+namespace Transporter.CouchbaseAdapter.Services.Source.Implementations
 {
     public class SourceService : ISourceService
     {
@@ -24,28 +24,38 @@ namespace Transporter.CouchbaseAdapter.Services.Implementations
             _bucketProvider = bucketProvider;
         }
 
-        public async Task<IEnumerable<dynamic>> GetSourceDataAsync(ICouchbaseSourceSettings settings)
+        public async Task<IEnumerable<dynamic>> GetSourceDataAsync(ICouchbaseSourceSettings settings,
+            IEnumerable<dynamic> ids)
         {
             var cluster = await _couchbaseProvider.GetCluster(settings.Options.ConnectionData);
-            var query = await GetSourceQueryAsync(settings);
-            
+            var query = await GetSourceQueryAsync(settings, ids);
+
             var result = await cluster.QueryAsync<dynamic>(query);
             var list = await TransformQueryResultToList(result);
 
             return list;
         }
         
+        public async Task DeleteDataByListOfIdsAsync(ICouchbaseSourceSettings settings,
+            IEnumerable<dynamic> ids)
+        {
+            var cluster = await _couchbaseProvider.GetCluster(settings.Options.ConnectionData);
+            var query = await GetDeleteQueryAsync(settings, ids);
+
+            await cluster.QueryAsync<dynamic>(query);
+        }
+
         public async Task<IEnumerable<dynamic>> GetIdDataAsync(ICouchbaseSourceSettings settings)
         {
             var cluster = await _couchbaseProvider.GetCluster(settings.Options.ConnectionData);
             var query = await GetSourceIdDataQueryAsync(settings);
-            
+
             var result = await cluster.QueryAsync<dynamic>(query);
             var list = await TransformQueryResultToList(result);
 
             return list;
         }
-        
+
         public async Task SetTargetDataAsync(ICouchbaseSourceSettings settings, string data)
         {
             var insertDataItems = data.ToObject<List<dynamic>>();
@@ -101,7 +111,25 @@ namespace Transporter.CouchbaseAdapter.Services.Implementations
 
             return await Task.FromResult(query.ToString());
         }
+
+        private async Task<string> GetSourceQueryAsync(ICouchbaseSourceSettings settings, IEnumerable<dynamic> ids)
+        {
+            var query = new StringBuilder();
+            query.AppendLine($"SELECT * FROM {settings.Options.Bucket}");
+            query.AppendLine($"USE KEYS [{string.Join(',', ids)}]");
+
+            return await Task.FromResult(query.ToString());
+        }
         
+        private async Task<string> GetDeleteQueryAsync(ICouchbaseSourceSettings settings, IEnumerable<dynamic> ids)
+        {
+            var query = new StringBuilder();
+            query.AppendLine($"DELETE FROM {settings.Options.Bucket}");
+            query.AppendLine($"USE KEYS [{string.Join(',', ids)}]");
+
+            return await Task.FromResult(query.ToString());
+        }
+
         private async Task<string> GetSourceIdDataQueryAsync(ICouchbaseSourceSettings settings)
         {
             var options = settings.Options;

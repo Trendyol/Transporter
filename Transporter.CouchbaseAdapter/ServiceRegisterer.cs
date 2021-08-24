@@ -3,8 +3,12 @@ using Transporter.Core;
 using Transporter.CouchbaseAdapter.Adapters;
 using Transporter.CouchbaseAdapter.Data.Implementations;
 using Transporter.CouchbaseAdapter.Data.Interfaces;
-using Transporter.CouchbaseAdapter.Services.Implementations;
-using Transporter.CouchbaseAdapter.Services.Interfaces;
+using Transporter.CouchbaseAdapter.Services.Interim.Implementations;
+using Transporter.CouchbaseAdapter.Services.Interim.Interfaces;
+using Transporter.CouchbaseAdapter.Services.Source.Implementations;
+using Transporter.CouchbaseAdapter.Services.Source.Interfaces;
+using Transporter.CouchbaseAdapter.Services.Target.Implementations;
+using Transporter.CouchbaseAdapter.Services.Target.Interfaces;
 
 namespace Transporter.CouchbaseAdapter
 {

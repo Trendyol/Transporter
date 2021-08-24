@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Transporter.MSSQLAdapter.Services
+namespace Transporter.MSSQLAdapter.Services.Target.Interfaces
 {
     public interface ITargetService
     {

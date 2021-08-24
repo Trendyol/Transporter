@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Transporter.Core;
 using Transporter.CouchbaseAdapter.ConfigOptions.Source.Interfaces;
-using Transporter.CouchbaseAdapter.Services.Interfaces;
+using Transporter.CouchbaseAdapter.Services.Source.Interfaces;
 
 namespace Transporter.CouchbaseAdapter.Adapters
 {
@@ -50,21 +50,14 @@ namespace Transporter.CouchbaseAdapter.Adapters
             _settings = GetOptions(jobSettings);
         }
 
-        public async Task<IEnumerable<dynamic>> GetAsync()
+        public async Task<IEnumerable<dynamic>> GetAsync(IEnumerable<dynamic> ids)
         {
-            return await _sourceService.GetSourceDataAsync(_settings);
+            return await _sourceService.GetSourceDataAsync(_settings, ids);
         }
 
-        public Task<IEnumerable<dynamic>> GetAsync(IEnumerable<dynamic> ids)
+        public async Task DeleteAsync(IEnumerable<dynamic> ids)
         {
-            // throw new NotImplementedException();
-            return null;
-        }
-
-        public Task DeleteAsync(IEnumerable<dynamic> ids)
-        {
-            // throw new NotImplementedException();
-            return Task.CompletedTask;
+            await _sourceService.DeleteDataByListOfIdsAsync(_settings, ids);
         }
 
         public async Task<IEnumerable<dynamic>> GetIdDataAsync()

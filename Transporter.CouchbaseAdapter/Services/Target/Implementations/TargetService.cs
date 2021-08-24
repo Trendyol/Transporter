@@ -8,10 +8,10 @@ using Couchbase.KeyValue;
 using Transporter.Core;
 using Transporter.CouchbaseAdapter.ConfigOptions.Target.Interfaces;
 using Transporter.CouchbaseAdapter.Data.Interfaces;
-using Transporter.CouchbaseAdapter.Services.Interfaces;
+using Transporter.CouchbaseAdapter.Services.Target.Interfaces;
 using Transporter.CouchbaseAdapter.Utils;
 
-namespace Transporter.CouchbaseAdapter.Services.Implementations
+namespace Transporter.CouchbaseAdapter.Services.Target.Implementations
 {
     public class TargetService : ITargetService
     {

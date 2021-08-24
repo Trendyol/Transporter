@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 using Dapper;
 using Transporter.Core;
 using Transporter.MSSQLAdapter.Data;
+using Transporter.MSSQLAdapter.Services.Source.Interfaces;
 
-namespace Transporter.MSSQLAdapter.Services
+namespace Transporter.MSSQLAdapter.Services.Source.Implementations
 {
     public class SourceService : ISourceService
     {
@@ -92,7 +93,7 @@ namespace Transporter.MSSQLAdapter.Services
         {
             var sqlOptions = settings.Options;
             var query = new StringBuilder();
-            query.AppendLine($"SELECT * FROM {sqlOptions.Schema}.{sqlOptions.Table}");
+            query.AppendLine($"SELECT * FROM {sqlOptions.Schema}.{sqlOptions.Table} ");
             query.AppendLine($"WHERE {settings.Options.IdColumn} IN ({string.Join(',', ids)})");
 
             return await Task.FromResult(query.ToString());

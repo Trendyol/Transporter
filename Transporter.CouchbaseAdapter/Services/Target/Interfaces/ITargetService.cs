@@ -1,8 +1,7 @@
 using System.Threading.Tasks;
-using Transporter.Core;
 using Transporter.CouchbaseAdapter.ConfigOptions.Target.Interfaces;
 
-namespace Transporter.CouchbaseAdapter.Services.Interfaces
+namespace Transporter.CouchbaseAdapter.Services.Target.Interfaces
 {
     public interface ITargetService
     {

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,10 +8,10 @@ using Couchbase.KeyValue;
 using Couchbase.Query;
 using Transporter.CouchbaseAdapter.ConfigOptions.Interim.Interfaces;
 using Transporter.CouchbaseAdapter.Data.Interfaces;
-using Transporter.CouchbaseAdapter.Services.Interfaces;
+using Transporter.CouchbaseAdapter.Services.Interim.Interfaces;
 using Transporter.CouchbaseAdapter.Utils;
 
-namespace Transporter.CouchbaseAdapter.Services.Implementations
+namespace Transporter.CouchbaseAdapter.Services.Interim.Implementations
 {
     public class InterimService : IInterimService
     {
@@ -79,17 +78,18 @@ namespace Transporter.CouchbaseAdapter.Services.Implementations
             return await Task.FromResult(query.ToString());
         }
 
-        private static StringBuilder BuildUpdateQuery(ICouchbaseInterimSettings settings, ICouchbaseInterimOptions options)
+        private static StringBuilder BuildUpdateQuery(ICouchbaseInterimSettings settings,
+            ICouchbaseInterimOptions options)
         {
             var query = new StringBuilder();
             query.AppendLine($"UPDATE {options.Bucket} SET lmd=CLOCK_LOCAL()");
             query.AppendLine($"WHERE dataSourceName='{options.DataSourceName}'");
-            query.AppendLine($"AND DATE_DIFF_STR(CLOCK_LOCAL(),lmd, 'second') > 5");
+            query.AppendLine("AND DATE_DIFF_STR(CLOCK_LOCAL(),lmd, 'second') > 5"); // TODO second minute olacak ileride.
             query.AppendLine($"limit {settings.Options.BatchQuantity} RETURNING RAW id");
 
             return query;
         }
-        
+
         private async Task<ICouchbaseCollection> GetCollectionAsync(ConnectionData connectionData, string bucket)
         {
             return await (await GetBucketAsync(connectionData, bucket)).DefaultCollectionAsync();

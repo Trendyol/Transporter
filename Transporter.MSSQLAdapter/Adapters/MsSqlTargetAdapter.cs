@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using Microsoft.VisualBasic.CompilerServices;
 using Transporter.Core;
 using Transporter.MSSQLAdapter.Services;
+using Transporter.MSSQLAdapter.Services.Target.Interfaces;
 
-namespace Transporter.MSSQLAdapter
+namespace Transporter.MSSQLAdapter.Adapters
 {
-    public class MsSqlSourceAdapter : ISourceAdapter, IInsertable
+    public class MsSqlTargetAdapter : ITargetAdapter
     {
         private readonly IConfiguration _configuration;
-        private readonly ISourceService _sourceService;
-        private ISqlSourceSettings _settings;
+        private readonly ITargetService _targetService;
+        private ISqlTargetSettings _settings;
 
 
-        public MsSqlSourceAdapter(ISourceService sourceService, IConfiguration configuration)
+        public MsSqlTargetAdapter(ITargetService targetService, IConfiguration configuration)
         {
-            _sourceService = sourceService;
+            _targetService = targetService;
             _configuration = configuration;
         }
 
@@ -47,27 +47,12 @@ namespace Transporter.MSSQLAdapter
 
         public async Task SetAsync(string data)
         {
-            await _sourceService.SetSourceDataAsync(_settings, data);
+            await _targetService.SetTargetDataAsync(_settings, data);
         }
 
-        public async Task<IEnumerable<dynamic>> GetAsync(IEnumerable<dynamic> ids)
+        public async Task SetTemporaryTableAsync(string data, string dataSourceName)
         {
-            return await _sourceService.GetSourceDataAsync(_settings, ids);
-        }
-        
-        public async Task DeleteAsync(IEnumerable<dynamic> ids)
-        {
-            await _sourceService.DeleteDataByListOfIdsAsync(_settings, ids);
-        }
-        
-        public string GetDataSourceName()
-        {
-            return $"{_settings.Options.Schema}.{_settings.Options.Table}";
-        }
-        
-        public async Task<IEnumerable<dynamic>> GetIdDataAsync()
-        {
-            return await _sourceService.GetIdDataAsync(_settings);
+            await _targetService.SetTargetTemporaryDataAsync(_settings, data, dataSourceName);
         }
 
         public virtual object Clone()
@@ -75,19 +60,19 @@ namespace Transporter.MSSQLAdapter
             var result = MemberwiseClone() as IAdapter;
             return result;
         }
-
-        private ISqlSourceSettings GetOptions(IJobSettings jobSettings)
-        {
-            var jobOptionsList = _configuration.GetSection(Constants.JobListSectionKey).Get<List<MsSqlJobSettings>>();
-            var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
-            return (ISqlSourceSettings) options.Source;
-        }
         
-        private ISqlSourceSettings GetOptions(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
+        private ISqlTargetSettings GetOptions(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
         {
             var jobOptionsList = _configuration.GetSection(Constants.TemporaryJobListSectionKey).Get<List<MsSqlJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
-            return (ISqlSourceSettings) options.Source;
+            return (ISqlTargetSettings) options.Target;
+        }
+
+        private ISqlTargetSettings GetOptions(IJobSettings jobSettings)
+        {
+            var jobOptionsList = _configuration.GetSection(Constants.JobListSectionKey).Get<List<MsSqlJobSettings>>();
+            var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
+            return (ISqlTargetSettings) options.Target;
         }
         
         private string GetTypeBySettings(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
@@ -95,7 +80,7 @@ namespace Transporter.MSSQLAdapter
             var jobOptionsList = _configuration.GetSection(Constants.TemporaryJobListSectionKey)
                 .Get<List<MsSqlJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
-            return options.Source?.Type;
+            return options.Target?.Type;
         }
     }
 }

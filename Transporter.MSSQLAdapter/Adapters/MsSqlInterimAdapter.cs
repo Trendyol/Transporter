@@ -4,40 +4,40 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Transporter.Core;
-using Transporter.CouchbaseAdapter.ConfigOptions.Interim.Interfaces;
-using Transporter.CouchbaseAdapter.Services.Interim.Interfaces;
+using Transporter.MSSQLAdapter.ConfigOptions.Interim.Interfaces;
+using Transporter.MSSQLAdapter.Services.Interim.Interfaces;
 
-namespace Transporter.CouchbaseAdapter.Adapters
+namespace Transporter.MSSQLAdapter.Adapters
 {
-    public class CouchbaseInterimAdapter : IInterimAdapter
+    public class MsSqlInterimAdapter : IInterimAdapter
     {
         private readonly IConfiguration _configuration;
         private readonly IInterimService _interimService;
-        private ICouchbaseInterimSettings _settings;
+        private IMsSqlInterimSettings _settings;
 
-        public CouchbaseInterimAdapter(IConfiguration configuration, IInterimService interimService)
+        public MsSqlInterimAdapter(IConfiguration configuration, IInterimService interimService)
         {
             _configuration = configuration;
             _interimService = interimService;
         }
-
+        
         public object Clone()
         {
             var result = MemberwiseClone() as IAdapter;
             return result;
         }
 
-        public bool CanHandle(IJobSettings jobSetting)
+        public bool CanHandle(IJobSettings jobSettings)
         {
-            var options = GetOptions(jobSetting);
-            return string.Equals(options.Type, Utils.Constants.OptionsType,
+            var options = GetOptions(jobSettings);
+            return string.Equals(options.Type, MsSqlAdapterConstants.OptionsType,
                 StringComparison.InvariantCultureIgnoreCase);
         }
 
         public bool CanHandle(TemporaryTableOptions.ITemporaryTableJobSettings jobSetting)
         {
             var type = GetTypeBySettings(jobSetting);
-            return string.Equals(type, Utils.Constants.OptionsType, StringComparison.InvariantCultureIgnoreCase);
+            return string.Equals(type, MsSqlAdapterConstants.OptionsType, StringComparison.InvariantCultureIgnoreCase);
         }
 
         public void SetOptions(IJobSettings jobSettings)
@@ -54,32 +54,30 @@ namespace Transporter.CouchbaseAdapter.Adapters
         {
             return await _interimService.GetInterimDataAsync(_settings);
         }
-        
+
         public async Task DeleteAsync(IEnumerable<dynamic> ids)
         {
             await _interimService.DeleteAsync(_settings, ids);
         }
-
-        private ICouchbaseInterimSettings GetOptions(IJobSettings jobSettings)
+        
+        private IMsSqlInterimSettings GetOptions(IJobSettings jobSettings)
         {
-            var jobOptionsList = _configuration.GetSection(Constants.JobListSectionKey)
-                .Get<List<CouchbaseJobSettings>>();
+            var jobOptionsList = _configuration.GetSection(Constants.JobListSectionKey).Get<List<MsSqlJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
-            return (ICouchbaseInterimSettings)options.Interim;
+            return (IMsSqlInterimSettings) options.Interim;
         }
-
-        private ICouchbaseInterimSettings GetOptions(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
+        
+        private IMsSqlInterimSettings GetOptions(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
         {
-            var jobOptionsList = _configuration.GetSection(Constants.TemporaryJobListSectionKey)
-                .Get<List<CouchbaseJobSettings>>();
+            var jobOptionsList = _configuration.GetSection(Constants.TemporaryJobListSectionKey).Get<List<MsSqlJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
-            return (ICouchbaseInterimSettings)options.Interim;
+            return (IMsSqlInterimSettings) options.Interim;
         }
-
+        
         private string GetTypeBySettings(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
         {
             var jobOptionsList = _configuration.GetSection(Constants.TemporaryJobListSectionKey)
-                .Get<List<CouchbaseJobSettings>>();
+                .Get<List<MsSqlJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
             return options.Interim?.Type;
         }

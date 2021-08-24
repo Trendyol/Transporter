@@ -1,4 +1,5 @@
 using Transporter.Core;
+using Transporter.MSSQLAdapter.ConfigOptions.Interim.Implementations;
 
 namespace Transporter.MSSQLAdapter
 {
@@ -8,12 +9,14 @@ namespace Transporter.MSSQLAdapter
         {
             Source = new MsSqlSourceSettings();
             Target = new MsSqlTargetSettings();
+            Interim = new MsSqlInterimSettings();
         }
 
         public string Name { get; set; }
         public string Cron { get; set; }
         public ISourceOptions Source { get; set; }
         public ITargetOptions Target { get; set; }
+        public IInterimOptions Interim { get; set; }
 
         public override string ToString()
         {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Transporter.MSSQLAdapter.Services
+namespace Transporter.MSSQLAdapter.Services.Source.Interfaces
 {
     public interface ISourceService
     {

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Transporter.Core;
 using Transporter.CouchbaseAdapter.ConfigOptions.Target.Interfaces;
-using Transporter.CouchbaseAdapter.Services.Interfaces;
+using Transporter.CouchbaseAdapter.Services.Target.Interfaces;
 
 namespace Transporter.CouchbaseAdapter.Adapters
 {

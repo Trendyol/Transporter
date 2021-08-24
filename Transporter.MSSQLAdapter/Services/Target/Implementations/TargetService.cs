@@ -9,8 +9,9 @@ using System.Threading.Tasks;
 using Dapper;
 using Transporter.Core;
 using Transporter.MSSQLAdapter.Data;
+using Transporter.MSSQLAdapter.Services.Target.Interfaces;
 
-namespace Transporter.MSSQLAdapter.Services
+namespace Transporter.MSSQLAdapter.Services.Target.Implementations
 {
     public class TargetService : ITargetService
     {
