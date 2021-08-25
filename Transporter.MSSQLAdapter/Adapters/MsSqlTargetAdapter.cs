@@ -4,8 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Transporter.Core;
-using Transporter.MSSQLAdapter.Services;
+using Transporter.Core.Adapters.Base.Interfaces;
+using Transporter.Core.Adapters.Target.Interfaces;
+using Transporter.Core.Utils;
+using Transporter.MSSQLAdapter.Configs.Target.Interfaces;
 using Transporter.MSSQLAdapter.Services.Target.Interfaces;
+using Transporter.MSSQLAdapter.Utils;
 
 namespace Transporter.MSSQLAdapter.Adapters
 {
@@ -13,9 +17,8 @@ namespace Transporter.MSSQLAdapter.Adapters
     {
         private readonly IConfiguration _configuration;
         private readonly ITargetService _targetService;
-        private ISqlTargetSettings _settings;
-
-
+        private IMsSqlTargetSettings _settings;
+        
         public MsSqlTargetAdapter(ITargetService targetService, IConfiguration configuration)
         {
             _targetService = targetService;
@@ -61,18 +64,18 @@ namespace Transporter.MSSQLAdapter.Adapters
             return result;
         }
         
-        private ISqlTargetSettings GetOptions(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
+        private IMsSqlTargetSettings GetOptions(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
         {
             var jobOptionsList = _configuration.GetSection(Constants.TemporaryJobListSectionKey).Get<List<MsSqlJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
-            return (ISqlTargetSettings) options.Target;
+            return (IMsSqlTargetSettings) options.Target;
         }
 
-        private ISqlTargetSettings GetOptions(IJobSettings jobSettings)
+        private IMsSqlTargetSettings GetOptions(IJobSettings jobSettings)
         {
             var jobOptionsList = _configuration.GetSection(Constants.JobListSectionKey).Get<List<MsSqlJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
-            return (ISqlTargetSettings) options.Target;
+            return (IMsSqlTargetSettings) options.Target;
         }
         
         private string GetTypeBySettings(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)

@@ -3,8 +3,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
-using Transporter.Core;
-using Transporter.MSSQLAdapter.Data;
+using Transporter.Core.Utils;
+using Transporter.MSSQLAdapter.Configs.Source.Interfaces;
+using Transporter.MSSQLAdapter.Data.Interfaces;
 using Transporter.MSSQLAdapter.Services.Source.Interfaces;
 
 namespace Transporter.MSSQLAdapter.Services.Source.Implementations
@@ -18,7 +19,7 @@ namespace Transporter.MSSQLAdapter.Services.Source.Implementations
             _dbConnectionFactory = dbConnectionFactory;
         }
 
-        public async Task<IEnumerable<dynamic>> GetSourceDataAsync(ISqlSourceSettings settings, IEnumerable<dynamic> ids)
+        public async Task<IEnumerable<dynamic>> GetSourceDataAsync(IMsSqlSourceSettings settings, IEnumerable<dynamic> ids)
         {
             using var connection =
                 _dbConnectionFactory.GetConnection(settings.Options.ConnectionString);
@@ -28,7 +29,7 @@ namespace Transporter.MSSQLAdapter.Services.Source.Implementations
             return result;
         }
 
-        public async Task DeleteDataByListOfIdsAsync(ISqlSourceSettings settings, IEnumerable<dynamic> ids)
+        public async Task DeleteDataByListOfIdsAsync(IMsSqlSourceSettings settings, IEnumerable<dynamic> ids)
         {
             using var connection =
                 _dbConnectionFactory.GetConnection(settings.Options.ConnectionString);
@@ -36,7 +37,7 @@ namespace Transporter.MSSQLAdapter.Services.Source.Implementations
             await connection.QueryAsync<dynamic>(query);
         }
 
-        public async Task<IEnumerable<dynamic>> GetIdDataAsync(ISqlSourceSettings settings)
+        public async Task<IEnumerable<dynamic>> GetIdDataAsync(IMsSqlSourceSettings settings)
         {
             using var connection =
                 _dbConnectionFactory.GetConnection(settings.Options.ConnectionString);
@@ -45,7 +46,7 @@ namespace Transporter.MSSQLAdapter.Services.Source.Implementations
             return result;
         }
 
-        public async Task SetSourceDataAsync(ISqlSourceSettings setting, string data)
+        public async Task SetSourceDataAsync(IMsSqlSourceSettings setting, string data)
         {
             var insertData = data.ToObject<List<Dictionary<string, string>>>();
             if (insertData is null || !insertData.Any()) return;
@@ -58,7 +59,7 @@ namespace Transporter.MSSQLAdapter.Services.Source.Implementations
         }
 
         private async Task<List<DynamicParameters>> GetParameters(List<Dictionary<string, string>> insertData,
-            ISqlSourceSettings sqlSourceSettings)
+            IMsSqlSourceSettings sqlSourceSettings)
         {
             var parameters = new List<DynamicParameters>();
 
@@ -75,7 +76,7 @@ namespace Transporter.MSSQLAdapter.Services.Source.Implementations
             return await Task.Run(() => parameters);
         }
 
-        private async Task<string> GetSourceInsertQueryAsync(ISqlSourceSettings setting,
+        private async Task<string> GetSourceInsertQueryAsync(IMsSqlSourceSettings setting,
             Dictionary<string, string> insertData)
         {
             var queryData = insertData.ToList();
@@ -89,7 +90,7 @@ namespace Transporter.MSSQLAdapter.Services.Source.Implementations
             return await Task.FromResult(query.ToString());
         }
 
-        private async Task<string> GetSourceQueryAsync(ISqlSourceSettings settings, IEnumerable<dynamic> ids)
+        private async Task<string> GetSourceQueryAsync(IMsSqlSourceSettings settings, IEnumerable<dynamic> ids)
         {
             var sqlOptions = settings.Options;
             var query = new StringBuilder();
@@ -99,7 +100,7 @@ namespace Transporter.MSSQLAdapter.Services.Source.Implementations
             return await Task.FromResult(query.ToString());
         }
         
-        private async Task<string> GetDeleteQueryAsync(ISqlSourceSettings settings, IEnumerable<dynamic> ids)
+        private async Task<string> GetDeleteQueryAsync(IMsSqlSourceSettings settings, IEnumerable<dynamic> ids)
         {
             var sqlOptions = settings.Options;
             var query = new StringBuilder();
@@ -109,7 +110,7 @@ namespace Transporter.MSSQLAdapter.Services.Source.Implementations
             return await Task.FromResult(query.ToString());
         }
         
-        private async Task<string> GetSourceIdDataQueryAsync(ISqlSourceSettings settings)
+        private async Task<string> GetSourceIdDataQueryAsync(IMsSqlSourceSettings settings)
         {
             var sqlOptions = settings.Options;
             var query = new StringBuilder();

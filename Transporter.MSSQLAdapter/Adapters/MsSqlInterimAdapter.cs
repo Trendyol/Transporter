@@ -4,8 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Transporter.Core;
-using Transporter.MSSQLAdapter.ConfigOptions.Interim.Interfaces;
+using Transporter.Core.Adapters.Base.Interfaces;
+using Transporter.Core.Adapters.Interim.Interfaces;
+using Transporter.Core.Utils;
+using Transporter.MSSQLAdapter.Configs.Interim.Interfaces;
 using Transporter.MSSQLAdapter.Services.Interim.Interfaces;
+using Transporter.MSSQLAdapter.Utils;
 
 namespace Transporter.MSSQLAdapter.Adapters
 {

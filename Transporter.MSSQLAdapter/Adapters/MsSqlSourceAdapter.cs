@@ -4,17 +4,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Transporter.Core;
-using Transporter.MSSQLAdapter.Services;
+using Transporter.Core.Adapters.Base.Interfaces;
+using Transporter.Core.Adapters.Source.Interfaces;
+using Transporter.Core.Utils;
+using Transporter.MSSQLAdapter.Configs.Source.Interfaces;
 using Transporter.MSSQLAdapter.Services.Source.Interfaces;
+using Transporter.MSSQLAdapter.Utils;
 
 namespace Transporter.MSSQLAdapter.Adapters
 {
-    public class MsSqlSourceAdapter : ISourceAdapter, IInsertable
+    public class MsSqlSourceAdapter : ISourceAdapter
     {
         private readonly IConfiguration _configuration;
         private readonly ISourceService _sourceService;
-        private ISqlSourceSettings _settings;
-
+        private IMsSqlSourceSettings _settings;
 
         public MsSqlSourceAdapter(ISourceService sourceService, IConfiguration configuration)
         {
@@ -76,18 +79,18 @@ namespace Transporter.MSSQLAdapter.Adapters
             return result;
         }
 
-        private ISqlSourceSettings GetOptions(IJobSettings jobSettings)
+        private IMsSqlSourceSettings GetOptions(IJobSettings jobSettings)
         {
             var jobOptionsList = _configuration.GetSection(Constants.JobListSectionKey).Get<List<MsSqlJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
-            return (ISqlSourceSettings) options.Source;
+            return (IMsSqlSourceSettings) options.Source;
         }
         
-        private ISqlSourceSettings GetOptions(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
+        private IMsSqlSourceSettings GetOptions(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
         {
             var jobOptionsList = _configuration.GetSection(Constants.TemporaryJobListSectionKey).Get<List<MsSqlJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
-            return (ISqlSourceSettings) options.Source;
+            return (IMsSqlSourceSettings) options.Source;
         }
         
         private string GetTypeBySettings(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)

@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Transporter.CouchbaseAdapter.ConfigOptions.Target.Interfaces;
+using Transporter.CouchbaseAdapter.Configs.Target.Interfaces;
 
 namespace Transporter.CouchbaseAdapter.Services.Target.Interfaces
 {

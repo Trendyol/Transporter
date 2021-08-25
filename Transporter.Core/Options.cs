@@ -1,3 +1,10 @@
+using Transporter.Core.Configs.Interim.Implementations;
+using Transporter.Core.Configs.Interim.Interfaces;
+using Transporter.Core.Configs.Source.Implementations;
+using Transporter.Core.Configs.Source.Interfaces;
+using Transporter.Core.Configs.Target.Implementations;
+using Transporter.Core.Configs.Target.Interfaces;
+
 namespace Transporter.Core
 {
     public interface IJobSettings
@@ -28,45 +35,5 @@ namespace Transporter.Core
             return
                 $"Name : {Name}\tCron : {Cron}\tSource : {Source}\tTarget : {Target}";
         }
-    }
-
-    public interface IOptions
-    {
-        public string Type { get; set; }
-    }
-
-    public interface ISourceOptions : IOptions
-    {
-        public string Host { get; set; }
-        public bool IsInsertableOnFailure { get; set; }
-    }
-
-    public class SourceOptions : ISourceOptions
-    {
-        public string Type { get; set; }
-        public string Host { get; set; }
-        public bool IsInsertableOnFailure { get; set; }
-    }
-
-    public interface ITargetOptions : IOptions
-    {
-        public string Host { get; set; }
-    }
-
-    public class TargetOptions : ITargetOptions
-    {
-        public string Type { get; set; }
-        public string Host { get; set; }
-    }
-
-    public interface IInterimOptions : IOptions
-    {
-        public string Host { get; set; }
-    }
-    
-    public class InterimOptions : IInterimOptions
-    {
-        public string Host { get; set; }
-        public string Type { get; set; }
     }
 }

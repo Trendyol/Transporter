@@ -1,5 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
-using Transporter.Core;
+using Transporter.Core.Adapters.Interim.Interfaces;
+using Transporter.Core.Adapters.Source.Interfaces;
+using Transporter.Core.Adapters.Target.Interfaces;
 using Transporter.CouchbaseAdapter.Adapters;
 using Transporter.CouchbaseAdapter.Data.Implementations;
 using Transporter.CouchbaseAdapter.Data.Interfaces;

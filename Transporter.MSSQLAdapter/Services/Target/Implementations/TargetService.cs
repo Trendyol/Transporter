@@ -7,8 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
-using Transporter.Core;
-using Transporter.MSSQLAdapter.Data;
+using Transporter.Core.Utils;
+using Transporter.MSSQLAdapter.Configs.Target.Interfaces;
+using Transporter.MSSQLAdapter.Data.Interfaces;
 using Transporter.MSSQLAdapter.Services.Target.Interfaces;
 
 namespace Transporter.MSSQLAdapter.Services.Target.Implementations
@@ -22,7 +23,7 @@ namespace Transporter.MSSQLAdapter.Services.Target.Implementations
             _dbConnectionFactory = dbConnectionFactory;
         }
 
-        public async Task SetTargetDataAsync(ISqlTargetSettings setting, string data)
+        public async Task SetTargetDataAsync(IMsSqlTargetSettings setting, string data)
         {
             var insertData = data.ToObject<List<Dictionary<string, string>>>();
             if (insertData is null || !insertData.Any()) return;
@@ -34,7 +35,7 @@ namespace Transporter.MSSQLAdapter.Services.Target.Implementations
             await connection.ExecuteAsync(query, parameters);
         }
 
-        public async Task SetTargetTemporaryDataAsync(ISqlTargetSettings setting, string data, string dataSourceName)
+        public async Task SetTargetTemporaryDataAsync(IMsSqlTargetSettings setting, string data, string dataSourceName)
         {
             var insertData = data.ToObject<List<Dictionary<string, string>>>();
             if (insertData is null || !insertData.Any()) return;
@@ -84,7 +85,7 @@ namespace Transporter.MSSQLAdapter.Services.Target.Implementations
             return await Task.Run(() => parameters);
         }
 
-        private async Task<string> GetTargetInsertQueryAsync(ISqlTargetSettings setting,
+        private async Task<string> GetTargetInsertQueryAsync(IMsSqlTargetSettings setting,
             Dictionary<string, string> insertData)
         {
             var excludedColumns = setting.Options.ExcludedColumns?.Split(",") ?? Array.Empty<string>();
@@ -99,7 +100,7 @@ namespace Transporter.MSSQLAdapter.Services.Target.Implementations
             return await Task.FromResult(query.ToString());
         }
 
-        private async Task<string> GetTargetInsertIdDataQueryAsync(ISqlTargetSettings setting,
+        private async Task<string> GetTargetInsertIdDataQueryAsync(IMsSqlTargetSettings setting,
             Dictionary<string, string> insertData)
         {
             var queryData = insertData.ToList();

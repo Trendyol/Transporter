@@ -4,7 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Transporter.Core;
-using Transporter.CouchbaseAdapter.ConfigOptions.Target.Interfaces;
+using Transporter.Core.Adapters.Base.Interfaces;
+using Transporter.Core.Adapters.Target.Interfaces;
+using Transporter.Core.Utils;
+using Transporter.CouchbaseAdapter.Configs.Target.Interfaces;
 using Transporter.CouchbaseAdapter.Services.Target.Interfaces;
 
 namespace Transporter.CouchbaseAdapter.Adapters

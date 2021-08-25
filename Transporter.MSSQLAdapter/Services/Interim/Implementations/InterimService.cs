@@ -3,9 +3,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
-using Transporter.Core;
-using Transporter.MSSQLAdapter.ConfigOptions.Interim.Interfaces;
-using Transporter.MSSQLAdapter.Data;
+using Transporter.Core.Utils;
+using Transporter.MSSQLAdapter.Configs.Interim.Interfaces;
+using Transporter.MSSQLAdapter.Data.Interfaces;
 using Transporter.MSSQLAdapter.Services.Interim.Interfaces;
 
 namespace Transporter.MSSQLAdapter.Services.Interim.Implementations

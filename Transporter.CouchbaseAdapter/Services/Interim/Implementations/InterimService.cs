@@ -6,7 +6,7 @@ using Couchbase;
 using Couchbase.Core.Exceptions.KeyValue;
 using Couchbase.KeyValue;
 using Couchbase.Query;
-using Transporter.CouchbaseAdapter.ConfigOptions.Interim.Interfaces;
+using Transporter.CouchbaseAdapter.Configs.Interim.Interfaces;
 using Transporter.CouchbaseAdapter.Data.Interfaces;
 using Transporter.CouchbaseAdapter.Services.Interim.Interfaces;
 using Transporter.CouchbaseAdapter.Utils;

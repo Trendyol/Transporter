@@ -11,6 +11,9 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using Quartz;
 using Transporter.Core;
+using Transporter.Core.Factories.Adapter.Implementations;
+using Transporter.Core.Factories.Adapter.Interfaces;
+using Transporter.Core.Utils;
 using Transporter.CouchbaseAdapter;
 using Transporter.MSSQLAdapter;
 using TransporterService.Jobs;
@@ -61,19 +64,19 @@ namespace TransporterService
                         
                         var jobOptionsList = hostContext.Configuration.GetSection(Constants.JobListSectionKey)
                         .Get<List<JobSettings>>();
-                        var temporaryJobOptionsList = hostContext.Configuration
-                            .GetSection(Constants.TemporaryJobListSectionKey)
-                            .Get<List<TemporaryTableOptions.TemporaryTableJobSettings>>();
+                        // var temporaryJobOptionsList = hostContext.Configuration
+                            // .GetSection(Constants.TemporaryJobListSectionKey)
+                            // .Get<List<TemporaryTableOptions.TemporaryTableJobSettings>>();
 
                         // Console.Error.Write("jobOptionsList : " + jobOptionsList.ToJson());
                         Console.Error.Write("hostContext : " +
                                             hostContext.Configuration[Constants.JobListSectionKey]);
 
                         jobOptionsList.ToList().ForEach(jobOptions => { InitializeQuartzJobs(quartz, jobOptions); });
-                        temporaryJobOptionsList.ToList().ForEach(jobOptions =>
-                        {
-                            InitializeQuartzJobsForTemporaryTable(quartz, jobOptions);
-                        });
+                        // temporaryJobOptionsList.ToList().ForEach(jobOptions =>
+                        // {
+                            // InitializeQuartzJobsForTemporaryTable(quartz, jobOptions);
+                        // });
                     });
 
                     // Quartz.Extensions.Hosting hosting

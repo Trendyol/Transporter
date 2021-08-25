@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Transporter.CouchbaseAdapter.ConfigOptions.Interim.Interfaces;
+using Transporter.CouchbaseAdapter.Configs.Interim.Interfaces;
 
 namespace Transporter.CouchbaseAdapter.Services.Interim.Interfaces
 {

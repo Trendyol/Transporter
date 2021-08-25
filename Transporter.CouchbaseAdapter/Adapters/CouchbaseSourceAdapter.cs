@@ -4,12 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Transporter.Core;
-using Transporter.CouchbaseAdapter.ConfigOptions.Source.Interfaces;
+using Transporter.Core.Adapters.Base.Interfaces;
+using Transporter.Core.Adapters.Source.Interfaces;
+using Transporter.Core.Utils;
+using Transporter.CouchbaseAdapter.Configs.Source.Interfaces;
 using Transporter.CouchbaseAdapter.Services.Source.Interfaces;
 
 namespace Transporter.CouchbaseAdapter.Adapters
 {
-    public class CouchbaseSourceAdapter : ISourceAdapter, IInsertable
+    public class CouchbaseSourceAdapter : ISourceAdapter
     {
         private readonly ISourceService _sourceService;
         private readonly IConfiguration _configuration;

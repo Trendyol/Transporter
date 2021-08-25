@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Transporter.MSSQLAdapter.ConfigOptions.Interim.Interfaces;
+using Transporter.MSSQLAdapter.Configs.Interim.Interfaces;
 
 namespace Transporter.MSSQLAdapter.Services.Interim.Interfaces
 {

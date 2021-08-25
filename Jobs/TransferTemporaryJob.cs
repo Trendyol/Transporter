@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Quartz;
 using Transporter.Core;
+using Transporter.Core.Adapters.Source.Interfaces;
+using Transporter.Core.Adapters.Target.Interfaces;
+using Transporter.Core.Factories.Adapter.Interfaces;
+using Transporter.Core.Utils;
 
 namespace TransporterService.Jobs
 {
@@ -37,7 +41,7 @@ namespace TransporterService.Jobs
                 
                 try
                 {
-                    if (target is not null) await target.SetTemporaryTableAsync(sourceData.ToJson(), source.GetDataSourceName());
+                     if (target is not null) await target.SetTemporaryTableAsync(sourceData.ToJson(), source.GetDataSourceName());
                 }
                 catch (Exception e)
                 {

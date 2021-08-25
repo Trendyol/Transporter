@@ -1,7 +1,10 @@
 using Transporter.Core;
-using Transporter.CouchbaseAdapter.ConfigOptions.Interim.Implementations;
-using Transporter.CouchbaseAdapter.ConfigOptions.Source.Implementations;
-using Transporter.CouchbaseAdapter.ConfigOptions.Target.Implementations;
+using Transporter.Core.Configs.Interim.Interfaces;
+using Transporter.Core.Configs.Source.Interfaces;
+using Transporter.Core.Configs.Target.Interfaces;
+using Transporter.CouchbaseAdapter.Configs.Interim.Implementations;
+using Transporter.CouchbaseAdapter.Configs.Source.Implementations;
+using Transporter.CouchbaseAdapter.Configs.Target.Implementations;
 
 namespace Transporter.CouchbaseAdapter
 {

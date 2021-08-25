@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Couchbase;
 using Couchbase.KeyValue;
 using Couchbase.Query;
-using Transporter.Core;
-using Transporter.CouchbaseAdapter.ConfigOptions.Source.Interfaces;
+using Transporter.Core.Utils;
+using Transporter.CouchbaseAdapter.Configs.Source.Interfaces;
 using Transporter.CouchbaseAdapter.Data.Interfaces;
 using Transporter.CouchbaseAdapter.Services.Source.Interfaces;
 using Transporter.CouchbaseAdapter.Utils;
@@ -104,14 +104,6 @@ namespace Transporter.CouchbaseAdapter.Services.Source.Implementations
             return list;
         }
 
-        private async Task<string> GetSourceQueryAsync(ICouchbaseSourceSettings settings)
-        {
-            var options = settings.Options;
-            var query = BuildQuery(settings, options);
-
-            return await Task.FromResult(query.ToString());
-        }
-
         private async Task<string> GetSourceQueryAsync(ICouchbaseSourceSettings settings, IEnumerable<dynamic> ids)
         {
             var query = new StringBuilder();
@@ -139,16 +131,6 @@ namespace Transporter.CouchbaseAdapter.Services.Source.Implementations
             query.AppendLine($"LIMIT {settings.Options.BatchQuantity}");
 
             return await Task.FromResult(query.ToString());
-        }
-
-        private static StringBuilder BuildQuery(ICouchbaseSourceSettings settings, ICouchbaseSourceOptions options)
-        {
-            var query = new StringBuilder();
-            query.AppendLine($"DELETE FROM {options.Bucket} b");
-            query.AppendLine($"WHERE ({(string.IsNullOrEmpty(options.Condition) ? "1=1" : options.Condition)})");
-            query.AppendLine($"limit {settings.Options.BatchQuantity} Returning b.*, meta().id");
-
-            return query;
         }
     }
 }
