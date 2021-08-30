@@ -5,10 +5,10 @@ using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Quartz;
-using Transporter.Core;
 using Transporter.Core.Adapters.Interim.Interfaces;
 using Transporter.Core.Adapters.Source.Interfaces;
 using Transporter.Core.Adapters.Target.Interfaces;
+using Transporter.Core.Configs.Base.Implementations;
 using Transporter.Core.Factories.Adapter.Interfaces;
 using Transporter.Core.Utils;
 
@@ -27,7 +27,7 @@ namespace TransporterService.Jobs
             _logger = logger;
         }
 
-        public JobSettings JobSettings { private get; set; }
+        public TransferJobSettings TransferJobSettings { private get; set; }
 
         public async Task Execute(IJobExecutionContext context)
         {
@@ -36,9 +36,9 @@ namespace TransporterService.Jobs
             {
                 PingSourceAndTargetHosts();
 
-                var interim = await _adapterFactory.GetAsync<IInterimAdapter>(JobSettings);
-                var source = await _adapterFactory.GetAsync<ISourceAdapter>(JobSettings);
-                var target = await _adapterFactory.GetAsync<ITargetAdapter>(JobSettings);
+                var interim = await _adapterFactory.GetAsync<IInterimAdapter>(TransferJobSettings);
+                var source = await _adapterFactory.GetAsync<ISourceAdapter>(TransferJobSettings);
+                var target = await _adapterFactory.GetAsync<ITargetAdapter>(TransferJobSettings);
 
                 var interimData = await interim.GetAsync();
                 var interimList = interimData.ToList();
@@ -55,7 +55,7 @@ namespace TransporterService.Jobs
                 await interim.DeleteAsync(interimList);
 
                 await Console.Error.WriteLineAsync(
-                    $"{context.FireInstanceId} : {JobSettings.Name} => {DateTimeOffset.Now} => {JobSettings.Source} => {context.JobDetail.Key} => Count : {sourceData.Count()} ");
+                    $"{context.FireInstanceId} : {TransferJobSettings.Name} => {DateTimeOffset.Now} => {TransferJobSettings.Source} => {context.JobDetail.Key} => Count : {sourceData.Count()} ");
             }
             catch (Exception e)
             {
@@ -74,7 +74,7 @@ namespace TransporterService.Jobs
 
         private void PingTargetHost(Ping pingSender)
         {
-            var targetPingReply = pingSender.Send(JobSettings.Target.Host, 1000);
+            var targetPingReply = pingSender.Send(TransferJobSettings.Target.Host, 1000);
             if (targetPingReply?.Status != IPStatus.Success)
             {
                 throw new Exception("Target is unreachable");
@@ -83,7 +83,7 @@ namespace TransporterService.Jobs
 
         private void PingSourceHost(Ping pingSender)
         {
-            var sourcePingReply = pingSender.Send(JobSettings.Source.Host, 1000);
+            var sourcePingReply = pingSender.Send(TransferJobSettings.Source.Host, 1000);
             if (sourcePingReply?.Status != IPStatus.Success)
             {
                 throw new Exception("Source is unreachable");

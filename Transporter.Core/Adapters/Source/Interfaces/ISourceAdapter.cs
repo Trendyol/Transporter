@@ -8,7 +8,7 @@ namespace Transporter.Core.Adapters.Source.Interfaces
     {
         Task<IEnumerable<dynamic>> GetAsync(IEnumerable<dynamic> ids);
         Task DeleteAsync(IEnumerable<dynamic> ids);
-        Task<IEnumerable<dynamic>> GetIdDataAsync();
+        Task<IEnumerable<dynamic>> GetIdsAsync();
         string GetDataSourceName();
     }
 }

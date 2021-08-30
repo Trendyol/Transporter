@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using Transporter.Core;
 using Transporter.Core.Adapters.Base.Interfaces;
 using Transporter.Core.Adapters.Source.Interfaces;
+using Transporter.Core.Configs.Base.Interfaces;
 using Transporter.Core.Utils;
 using Transporter.MSSQLDeleteAdapter.Configs.Source.Interfaces;
 using Transporter.MSSQLDeleteAdapter.Services.Interfaces;
@@ -26,25 +26,25 @@ namespace Transporter.MSSQLDeleteAdapter.Adapters
             _configuration = configuration;
         }
 
-        public bool CanHandle(IJobSettings jobSettings)
+        public bool CanHandle(ITransferJobSettings transferJobSettings)
         {
-            var options = GetOptions(jobSettings);
+            var options = GetOptions(transferJobSettings);
             return string.Equals(options.Type, Constants.OptionsType,
                 StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public bool CanHandle(TemporaryTableOptions.ITemporaryTableJobSettings jobSetting)
+        public bool CanHandle(IPollingJobSettings jobSetting)
         {
             var type = GetTypeBySettings(jobSetting);
             return string.Equals(type, Constants.OptionsType, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public void SetOptions(IJobSettings jobSettings)
+        public void SetOptions(ITransferJobSettings transferJobSettings)
         {
-            _settings = GetOptions(jobSettings);
+            _settings = GetOptions(transferJobSettings);
         }
 
-        public void SetOptions(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
+        public void SetOptions(IPollingJobSettings jobSettings)
         {
             throw new NotImplementedException();
         }
@@ -64,7 +64,7 @@ namespace Transporter.MSSQLDeleteAdapter.Adapters
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<dynamic>> GetIdDataAsync()
+        public Task<IEnumerable<dynamic>> GetIdsAsync()
         {
             throw new NotImplementedException();
         }
@@ -74,24 +74,29 @@ namespace Transporter.MSSQLDeleteAdapter.Adapters
             return $"{_settings.Options.Schema}.{_settings.Options.Table}";
         }
 
+        public string GetIdColumn()
+        {
+            return $"{_settings.Options.IdColumn}";
+        }
+
         public virtual object Clone()
         {
             var result = MemberwiseClone() as IAdapter;
             return result;
         }
 
-        private IMsSqlSourceSettings GetOptions(IJobSettings jobSettings)
+        private IMsSqlSourceSettings GetOptions(ITransferJobSettings transferJobSettings)
         {
-            var jobOptionsList = _configuration[Core.Utils.Constants.JobListSectionKey]
-                .ToObject<ICollection<MsSqlJobSettings>>().ToList();
-            var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
+            var jobOptionsList = _configuration[Core.Utils.Constants.TransferJobSettings]
+                .ToObject<ICollection<MsSqlTransferJobSettings>>().ToList();
+            var options = jobOptionsList.First(x => x.Name == transferJobSettings.Name);
             return (IMsSqlSourceSettings) options.Source;
         }
 
-        private string GetTypeBySettings(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
+        private string GetTypeBySettings(IPollingJobSettings jobSettings)
         {
-            var jobOptionsList = _configuration.GetSection(Core.Utils.Constants.TemporaryJobListSectionKey)
-                .Get<List<MsSqlJobSettings>>();
+            var jobOptionsList = _configuration.GetSection(Core.Utils.Constants.PollingJobSettings)
+                .Get<List<MsSqlTransferJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
             return options.Source?.Type;
         }

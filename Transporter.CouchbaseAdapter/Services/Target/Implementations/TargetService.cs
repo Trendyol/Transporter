@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Couchbase;
 using Couchbase.Core.Exceptions.KeyValue;
 using Couchbase.KeyValue;
+using Newtonsoft.Json.Linq;
 using Transporter.Core.Models;
 using Transporter.Core.Utils;
 using Transporter.CouchbaseAdapter.Configs.Target.Interfaces;
@@ -26,7 +27,6 @@ namespace Transporter.CouchbaseAdapter.Services.Target.Implementations
         public async Task SetTargetDataAsync(ICouchbaseTargetSettings settings, string data)
         {
             var insertDataItems = data.ToObject<List<dynamic>>();
-            var dataItemIds = data.ToObject<List<IdObject>>();
 
             if (insertDataItems is null || !insertDataItems.Any())
             {
@@ -35,7 +35,7 @@ namespace Transporter.CouchbaseAdapter.Services.Target.Implementations
 
             try
             {
-                var tasks = await InsertItems(settings, insertDataItems, dataItemIds);
+                var tasks = await InsertItems(settings, insertDataItems);
                 await Task.WhenAll(tasks);
             }
             catch (DocumentExistsException)
@@ -43,10 +43,9 @@ namespace Transporter.CouchbaseAdapter.Services.Target.Implementations
             }
         }
 
-        public async Task SetTargetTemporaryDataAsync(ICouchbaseTargetSettings settings, string data,
-            string dataSourceName)
+        public async Task SetInterimDataAsync(ICouchbaseTargetSettings settings, string data, string dataSourceName)
         {
-            var dataItemIds = data.ToObject<List<IdObject>>();
+            var dataItemIds = data.ToObject<List<IdObject>>().ToList();
             var insertDataItems = dataItemIds.Select(SelectTemporaryTableDataFromId(dataSourceName)).ToList();
 
             if (!insertDataItems.Any())
@@ -56,7 +55,7 @@ namespace Transporter.CouchbaseAdapter.Services.Target.Implementations
 
             try
             {
-                var tasks = await InsertItems(settings, insertDataItems, dataItemIds, dataSourceName);
+                var tasks = await InsertItems(settings, insertDataItems, dataSourceName);
                 await Task.WhenAll(tasks);
             }
             catch (DocumentExistsException)
@@ -80,14 +79,14 @@ namespace Transporter.CouchbaseAdapter.Services.Target.Implementations
         }
 
         private async Task<List<Task<IMutationResult>>> InsertItems(ICouchbaseTargetSettings settings,
-            List<InterimTable> insertDataItems, List<IdObject> dataItemIds, string dataSourceName)
+            List<InterimTable> insertDataItems, string dataSourceName)
         {
             var collection = await GetCollectionAsync(settings.Options.ConnectionData, settings.Options.Bucket);
             var tasks = new List<Task<IMutationResult>>();
 
-            for (var i = 0; i < insertDataItems.Count; i++)
+            foreach (var interimData in insertDataItems)
             {
-                var task = collection.InsertAsync($"{dataItemIds[i].Id}_{dataSourceName}", insertDataItems[i]);
+                var task = collection.InsertAsync($"{interimData.Id}_{dataSourceName}", interimData);
                 tasks.Add(task);
             }
 
@@ -95,14 +94,16 @@ namespace Transporter.CouchbaseAdapter.Services.Target.Implementations
         }
 
         private async Task<List<Task<IMutationResult>>> InsertItems(ICouchbaseTargetSettings settings,
-            List<dynamic> insertDataItems, List<IdObject> dataItemIds)
+            List<dynamic> insertDataItems)
         {
             var collection = await GetCollectionAsync(settings.Options.ConnectionData, settings.Options.Bucket);
             var tasks = new List<Task<IMutationResult>>();
 
             for (var i = 0; i < insertDataItems.Count; i++)
             {
-                var task = collection.InsertAsync(dataItemIds[i].Id, insertDataItems[i]);
+                var id = ((JObject)insertDataItems[i])["id"].ToString();
+                var data = ((JObject)insertDataItems[i])["SourceBucket"];
+                var task = collection.InsertAsync(id, data);
                 tasks.Add(task);
             }
 

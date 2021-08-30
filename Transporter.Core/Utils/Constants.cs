@@ -2,7 +2,7 @@ namespace Transporter.Core.Utils
 {
     public static class Constants
     {
-        public const string JobListSectionKey = "TransporterJobList";
-        public const string TemporaryJobListSectionKey = "TemporaryJobList";
+        public const string TransferJobSettings = "TransferJobSettings";
+        public const string PollingJobSettings = "PollingJobSettings";
     }
 }

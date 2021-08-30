@@ -5,6 +5,7 @@ using Transporter.Core.Adapters.Base.Interfaces;
 using Transporter.Core.Adapters.Interim.Interfaces;
 using Transporter.Core.Adapters.Source.Interfaces;
 using Transporter.Core.Adapters.Target.Interfaces;
+using Transporter.Core.Configs.Base.Implementations;
 using Transporter.Core.Factories.Adapter.Interfaces;
 
 namespace Transporter.Core.Factories.Adapter.Implementations
@@ -23,7 +24,7 @@ namespace Transporter.Core.Factories.Adapter.Implementations
             _interimAdapters = interimAdapters;
         }
 
-        public async Task<T> GetAsync<T>(JobSettings options) where T : IAdapter
+        public async Task<T> GetAsync<T>(TransferJobSettings options) where T : IAdapter
         {
             var adapter = await GetAdapterAsync<T>(options);
             if (adapter is null) return default;
@@ -31,7 +32,7 @@ namespace Transporter.Core.Factories.Adapter.Implementations
             return adapter;
         }
         
-        public async Task<T> GetAsync<T>(TemporaryTableOptions.TemporaryTableJobSettings options) where T : IAdapter
+        public async Task<T> GetAsync<T>(PollingJobSettings options) where T : IAdapter
         {
             var adapter = await GetAdapterAsync<T>(options);
             if (adapter is null) return default;
@@ -39,7 +40,7 @@ namespace Transporter.Core.Factories.Adapter.Implementations
             return adapter;
         }
         
-        private async Task<T> GetAdapterAsync<T>(TemporaryTableOptions.TemporaryTableJobSettings options) where T : IAdapter
+        private async Task<T> GetAdapterAsync<T>(PollingJobSettings options) where T : IAdapter
         {
             var properAdapter = default(T);
             if (typeof(T) == typeof(ITargetAdapter))
@@ -51,7 +52,7 @@ namespace Transporter.Core.Factories.Adapter.Implementations
             return (T) await Task.Run(() => properAdapter?.Clone());
         }
 
-        private async Task<T> GetAdapterAsync<T>(JobSettings options) where T : IAdapter
+        private async Task<T> GetAdapterAsync<T>(TransferJobSettings options) where T : IAdapter
         {
             var properAdapter = default(T);
             if (typeof(T) == typeof(ITargetAdapter))

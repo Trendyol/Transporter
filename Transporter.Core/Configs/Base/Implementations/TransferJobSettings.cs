@@ -1,3 +1,4 @@
+using Transporter.Core.Configs.Base.Interfaces;
 using Transporter.Core.Configs.Interim.Implementations;
 using Transporter.Core.Configs.Interim.Interfaces;
 using Transporter.Core.Configs.Source.Implementations;
@@ -5,19 +6,11 @@ using Transporter.Core.Configs.Source.Interfaces;
 using Transporter.Core.Configs.Target.Implementations;
 using Transporter.Core.Configs.Target.Interfaces;
 
-namespace Transporter.Core
+namespace Transporter.Core.Configs.Base.Implementations
 {
-    public interface IJobSettings
+    public class TransferJobSettings : ITransferJobSettings
     {
-        public string Name { get; set; }
-        public string Cron { get; set; }
-        public ISourceOptions Source { get; set; }
-        public ITargetOptions Target { get; set; }
-    }
-
-    public class JobSettings : IJobSettings
-    {
-        public JobSettings()
+        public TransferJobSettings()
         {
             Source = new SourceOptions();
             Target = new TargetOptions();

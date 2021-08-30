@@ -7,7 +7,7 @@ namespace Transporter.CouchbaseAdapter.Services.Target.Interfaces
     {
         Task SetTargetDataAsync(ICouchbaseTargetSettings settings, string data);
 
-        Task SetTargetTemporaryDataAsync(ICouchbaseTargetSettings settings, string data,
+        Task SetInterimDataAsync(ICouchbaseTargetSettings settings, string data,
             string dataSourceName);
     }
 }

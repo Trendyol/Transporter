@@ -1,4 +1,4 @@
-using Transporter.Core;
+using Transporter.Core.Configs.Base.Interfaces;
 using Transporter.Core.Configs.Interim.Interfaces;
 using Transporter.Core.Configs.Source.Interfaces;
 using Transporter.Core.Configs.Target.Interfaces;
@@ -8,9 +8,9 @@ using Transporter.CouchbaseAdapter.Configs.Target.Implementations;
 
 namespace Transporter.CouchbaseAdapter
 {
-    public class CouchbaseJobSettings : IJobSettings
+    public class CouchbaseTransferJobSettings : ITransferJobSettings
     {
-        public CouchbaseJobSettings()
+        public CouchbaseTransferJobSettings()
         {
             Source = new CouchbaseSourceSettings();
             Target = new CouchbaseTargetSettings();

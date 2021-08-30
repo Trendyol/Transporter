@@ -1,13 +1,13 @@
-using Transporter.Core;
+using Transporter.Core.Configs.Base.Interfaces;
 using Transporter.Core.Configs.Source.Interfaces;
 using Transporter.Core.Configs.Target.Interfaces;
 using Transporter.MSSQLDeleteAdapter.Configs.Source.Implementations;
 
 namespace Transporter.MSSQLDeleteAdapter
 {
-    public class MsSqlJobSettings : IJobSettings
+    public class MsSqlTransferJobSettings : ITransferJobSettings
     {
-        public MsSqlJobSettings()
+        public MsSqlTransferJobSettings()
         {
             Source = new MsSqlSourceSettings();
         }

@@ -6,6 +6,6 @@ namespace Transporter.Core.Adapters.Target.Interfaces
     public interface ITargetAdapter : IAdapter
     {
         Task SetAsync(string data);
-        Task SetTemporaryTableAsync(string data, string dataSourceName);
+        Task SetInterimTableAsync(string data, string dataSourceName);
     }
 }

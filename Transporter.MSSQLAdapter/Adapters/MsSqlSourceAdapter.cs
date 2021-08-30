@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using Transporter.Core;
 using Transporter.Core.Adapters.Base.Interfaces;
 using Transporter.Core.Adapters.Source.Interfaces;
+using Transporter.Core.Configs.Base.Interfaces;
 using Transporter.Core.Utils;
 using Transporter.MSSQLAdapter.Configs.Source.Interfaces;
 using Transporter.MSSQLAdapter.Services.Source.Interfaces;
@@ -25,25 +25,25 @@ namespace Transporter.MSSQLAdapter.Adapters
             _configuration = configuration;
         }
 
-        public bool CanHandle(IJobSettings jobSettings)
+        public bool CanHandle(ITransferJobSettings transferJobSettings)
         {
-            var options = GetOptions(jobSettings);
+            var options = GetOptions(transferJobSettings);
             return string.Equals(options.Type, MsSqlAdapterConstants.OptionsType,
                 StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public bool CanHandle(TemporaryTableOptions.ITemporaryTableJobSettings jobSetting)
+        public bool CanHandle(IPollingJobSettings jobSetting)
         {
             var type = GetTypeBySettings(jobSetting);
             return string.Equals(type, MsSqlAdapterConstants.OptionsType, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public void SetOptions(IJobSettings jobSettings)
+        public void SetOptions(ITransferJobSettings transferJobSettings)
         {
-            _settings = GetOptions(jobSettings);
+            _settings = GetOptions(transferJobSettings);
         }
 
-        public void SetOptions(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
+        public void SetOptions(IPollingJobSettings jobSettings)
         {
             _settings = GetOptions(jobSettings);
         }
@@ -57,18 +57,18 @@ namespace Transporter.MSSQLAdapter.Adapters
         {
             return await _sourceService.GetSourceDataAsync(_settings, ids);
         }
-        
+
         public async Task DeleteAsync(IEnumerable<dynamic> ids)
         {
             await _sourceService.DeleteDataByListOfIdsAsync(_settings, ids);
         }
-        
+
         public string GetDataSourceName()
         {
             return $"{_settings.Options.Schema}.{_settings.Options.Table}";
         }
-        
-        public async Task<IEnumerable<dynamic>> GetIdDataAsync()
+
+        public async Task<IEnumerable<dynamic>> GetIdsAsync()
         {
             return await _sourceService.GetIdDataAsync(_settings);
         }
@@ -79,24 +79,26 @@ namespace Transporter.MSSQLAdapter.Adapters
             return result;
         }
 
-        private IMsSqlSourceSettings GetOptions(IJobSettings jobSettings)
+        private IMsSqlSourceSettings GetOptions(ITransferJobSettings transferJobSettings)
         {
-            var jobOptionsList = _configuration.GetSection(Constants.JobListSectionKey).Get<List<MsSqlJobSettings>>();
-            var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
-            return (IMsSqlSourceSettings) options.Source;
+            var jobOptionsList = _configuration.GetSection(Constants.TransferJobSettings)
+                .Get<List<MsSqlTransferJobSettings>>();
+            var options = jobOptionsList.First(x => x.Name == transferJobSettings.Name);
+            return (IMsSqlSourceSettings)options.Source;
         }
-        
-        private IMsSqlSourceSettings GetOptions(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
+
+        private IMsSqlSourceSettings GetOptions(IPollingJobSettings jobSettings)
         {
-            var jobOptionsList = _configuration.GetSection(Constants.TemporaryJobListSectionKey).Get<List<MsSqlJobSettings>>();
+            var jobOptionsList = _configuration.GetSection(Constants.PollingJobSettings)
+                .Get<List<MsSqlTransferJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
-            return (IMsSqlSourceSettings) options.Source;
+            return (IMsSqlSourceSettings)options.Source;
         }
-        
-        private string GetTypeBySettings(TemporaryTableOptions.ITemporaryTableJobSettings jobSettings)
+
+        private string GetTypeBySettings(IPollingJobSettings jobSettings)
         {
-            var jobOptionsList = _configuration.GetSection(Constants.TemporaryJobListSectionKey)
-                .Get<List<MsSqlJobSettings>>();
+            var jobOptionsList = _configuration.GetSection(Constants.PollingJobSettings)
+                .Get<List<MsSqlTransferJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
             return options.Source?.Type;
         }

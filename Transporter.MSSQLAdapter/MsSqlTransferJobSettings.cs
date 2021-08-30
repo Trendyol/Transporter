@@ -1,4 +1,4 @@
-using Transporter.Core;
+using Transporter.Core.Configs.Base.Interfaces;
 using Transporter.Core.Configs.Interim.Interfaces;
 using Transporter.Core.Configs.Source.Interfaces;
 using Transporter.Core.Configs.Target.Interfaces;
@@ -8,9 +8,9 @@ using Transporter.MSSQLAdapter.Configs.Target.Implementations;
 
 namespace Transporter.MSSQLAdapter
 {
-    public class MsSqlJobSettings : IJobSettings
+    public class MsSqlTransferJobSettings : ITransferJobSettings
     {
-        public MsSqlJobSettings()
+        public MsSqlTransferJobSettings()
         {
             Source = new MsSqlSourceSettings();
             Target = new MsSqlTargetSettings();

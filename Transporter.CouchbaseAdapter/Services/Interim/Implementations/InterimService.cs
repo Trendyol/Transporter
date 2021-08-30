@@ -82,7 +82,7 @@ namespace Transporter.CouchbaseAdapter.Services.Interim.Implementations
             ICouchbaseInterimOptions options)
         {
             var query = new StringBuilder();
-            query.AppendLine($"UPDATE {options.Bucket} SET lmd=CLOCK_LOCAL()");
+            query.AppendLine($"UPDATE `{options.Bucket}` SET lmd=CLOCK_LOCAL()");
             query.AppendLine($"WHERE dataSourceName='{options.DataSourceName}'");
             query.AppendLine("AND DATE_DIFF_STR(CLOCK_LOCAL(),lmd, 'second') > 5"); // TODO second minute olacak ileride.
             query.AppendLine($"limit {settings.Options.BatchQuantity} RETURNING RAW id");
