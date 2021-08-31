@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Quartz;
@@ -11,6 +10,7 @@ using Transporter.Core.Adapters.Target.Interfaces;
 using Transporter.Core.Configs.Base.Implementations;
 using Transporter.Core.Factories.Adapter.Interfaces;
 using Transporter.Core.Utils;
+using TransporterService.Helpers;
 
 namespace TransporterService.Jobs
 {
@@ -66,28 +66,8 @@ namespace TransporterService.Jobs
 
         private void PingSourceAndTargetHosts()
         {
-            var pingSender = new Ping();
-
-            PingSourceHost(pingSender);
-            PingTargetHost(pingSender);
-        }
-
-        private void PingTargetHost(Ping pingSender)
-        {
-            var targetPingReply = pingSender.Send(TransferJobSettings.Target.Host, 1000);
-            if (targetPingReply?.Status != IPStatus.Success)
-            {
-                throw new Exception("Target is unreachable");
-            }
-        }
-
-        private void PingSourceHost(Ping pingSender)
-        {
-            var sourcePingReply = pingSender.Send(TransferJobSettings.Source.Host, 1000);
-            if (sourcePingReply?.Status != IPStatus.Success)
-            {
-                throw new Exception("Source is unreachable");
-            }
+            PingHelper.PingHost(TransferJobSettings.Source.Host);
+            PingHelper.PingHost(TransferJobSettings.Target.Host);
         }
     }
 }
