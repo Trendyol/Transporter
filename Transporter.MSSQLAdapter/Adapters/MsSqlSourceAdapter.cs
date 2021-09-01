@@ -48,11 +48,6 @@ namespace Transporter.MSSQLAdapter.Adapters
             _settings = GetOptions(jobSettings);
         }
 
-        public async Task SetAsync(string data)
-        {
-            await _sourceService.SetSourceDataAsync(_settings, data);
-        }
-
         public async Task<IEnumerable<dynamic>> GetAsync(IEnumerable<dynamic> ids)
         {
             return await _sourceService.GetSourceDataAsync(_settings, ids);
