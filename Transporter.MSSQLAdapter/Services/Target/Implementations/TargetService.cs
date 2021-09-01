@@ -46,7 +46,7 @@ namespace Transporter.MSSQLAdapter.Services.Target.Implementations
             if (insertData is null || !insertData.Any()) return;
 
             var upperCasedInsertData = insertData
-                .Select(ConvertDictionaryKeysToUpperCase())
+                .Select(ConvertKeysToId("Id"))
                 .ToList();
 
             foreach (var dictionary in upperCasedInsertData)
@@ -72,6 +72,11 @@ namespace Transporter.MSSQLAdapter.Services.Target.Implementations
             {
                 Console.WriteLine(e.Message);
             }
+        }
+        
+        private static Func<Dictionary<string, string>, Dictionary<string, string>> ConvertKeysToId(string id)
+        {
+            return dictionary => dictionary.ToDictionary(x => id, x => x.Value);
         }
 
         private static Func<Dictionary<string, string>, Dictionary<string, string>> ConvertDictionaryKeysToUpperCase()
