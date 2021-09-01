@@ -6,5 +6,6 @@ namespace Transporter.CouchbaseAdapter.Configs.Target.Interfaces
     {
         public ConnectionData ConnectionData { get; set; }
         public string Bucket { get; set; }
+        public string KeyProperty { get; set; }
     }
 }

@@ -7,7 +7,6 @@ namespace Transporter.CouchbaseAdapter.Configs.Target.Implementations
     {
         public ConnectionData ConnectionData { get; set; }
         public string Bucket { get; set; }
-        public long BatchQuantity { get; set; }
-        public string Condition { get; set; }
+        public string KeyProperty { get; set; }
     }
 }

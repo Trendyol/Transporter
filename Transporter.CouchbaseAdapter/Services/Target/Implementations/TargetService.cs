@@ -98,11 +98,14 @@ namespace Transporter.CouchbaseAdapter.Services.Target.Implementations
         {
             var collection = await GetCollectionAsync(settings.Options.ConnectionData, settings.Options.Bucket);
             var tasks = new List<Task<IMutationResult>>();
+            var keyProperty = settings.Options.KeyProperty;
 
             for (var i = 0; i < insertDataItems.Count; i++)
             {
-                var id = ((JObject)insertDataItems[i])["id"].ToString();
-                var data = ((JObject)insertDataItems[i])["SourceBucket"];
+                var data = insertDataItems[i];
+                var id = ((JObject) data)[keyProperty].ToString();
+                ((JObject)data).Remove(keyProperty);
+                
                 var task = collection.InsertAsync(id, data);
                 tasks.Add(task);
             }

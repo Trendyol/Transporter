@@ -25,7 +25,7 @@ namespace Transporter.MSSQLAdapter.Services.Target.Implementations
 
         public async Task SetTargetDataAsync(IMsSqlTargetSettings setting, string data)
         {
-            var insertData = ConvertDataToDictionary(data);
+            var insertData = data.ToObject<List<Dictionary<string, string>>>();
 
             if (insertData is null || !insertData.Any()) return;
             
@@ -38,21 +38,6 @@ namespace Transporter.MSSQLAdapter.Services.Target.Implementations
             using var connection = _dbConnectionFactory.GetConnection(setting.Options.ConnectionString);
             var query = await GetTargetInsertQueryAsync(setting, upperCasedInsertData.FirstOrDefault());
             await connection.ExecuteAsync(query, parameters);
-        }
-
-        private static List<Dictionary<string, string>> ConvertDataToDictionary(string stringData)
-        {
-            var dynamicListData = stringData.ToObject<List<dynamic>>();
-            var newInsertData = new List<dynamic>();
-
-            foreach (var dynamicData in dynamicListData)
-            {
-                var insertData = dynamicData["SourceBucket"];
-                insertData["id"] = dynamicData["id"];
-                newInsertData.Add(insertData);
-            }
-
-            return newInsertData.ToJson().ToObject<List<Dictionary<string, string>>>();
         }
 
         public async Task SetTargetTemporaryDataAsync(IMsSqlTargetSettings setting, string data, string dataSourceName)

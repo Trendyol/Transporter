@@ -48,7 +48,19 @@ namespace Transporter.CouchbaseAdapter.Services.Source.Implementations
             var query = await GetSourceIdDataQueryAsync(settings);
 
             var result = await cluster.QueryAsync<dynamic>(query);
-            var list = await TransformQueryResultToList(result);
+            var list = await TransformIdQueryResultToList(result);
+
+            return list;
+        }
+        
+        private static async Task<List<dynamic>> TransformIdQueryResultToList(IQueryResult<dynamic> result)
+        {
+            var list = new List<dynamic>();
+
+            await result.Rows.ForEachAsync(row =>
+            {
+                list.Add(row);
+            });
 
             return list;
         }
@@ -57,7 +69,13 @@ namespace Transporter.CouchbaseAdapter.Services.Source.Implementations
         {
             var list = new List<dynamic>();
 
-            await result.Rows.ForEachAsync(x => { list.Add(x); });
+            await result.Rows.ForEachAsync(row =>
+            {
+                var data = row["SourceBucket"];
+                data["id"] = row["id"];
+                list.Add(data);
+            });
+
             return list;
         }
 
