@@ -125,7 +125,7 @@ namespace TransporterService
                 { { "pollingJobSettings", jobSettings } });
             var jobKey = new JobKey(jobSettings.Name, jobSettings.Source.ToString());
 
-            quartzConfigurator.AddJob<TransferTemporaryJob>(j => j
+            quartzConfigurator.AddJob<PollingJob>(j => j
                 .StoreDurably()
                 .WithIdentity(jobKey)
                 .WithDescription($"{jobSettings.Name} {jobSettings.Source} => {jobSettings.Target}")

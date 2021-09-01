@@ -14,12 +14,12 @@ namespace TransporterService.Jobs
 {
     [PersistJobDataAfterExecution]
     [DisallowConcurrentExecution]
-    public class TransferTemporaryJob : IJob
+    public class PollingJob : IJob
     {
         private readonly IAdapterFactory _adapterFactory;
-        private readonly ILogger<TransferJob> _logger;
+        private readonly ILogger<PollingJob> _logger;
 
-        public TransferTemporaryJob(IAdapterFactory adapterFactory, ILogger<TransferJob> logger)
+        public PollingJob(IAdapterFactory adapterFactory, ILogger<PollingJob> logger)
         {
             _adapterFactory = adapterFactory;
             _logger = logger;
