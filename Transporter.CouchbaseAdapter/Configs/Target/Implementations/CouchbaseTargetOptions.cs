@@ -8,5 +8,6 @@ namespace Transporter.CouchbaseAdapter.Configs.Target.Implementations
         public ConnectionData ConnectionData { get; set; }
         public string Bucket { get; set; }
         public string KeyProperty { get; set; }
+        public string ExcludedProperties { get; set; }
     }
 }

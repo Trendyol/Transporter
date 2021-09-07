@@ -19,6 +19,5 @@ namespace Transporter.CouchbaseAdapter.Configs.Source.Implementations
         }
 
         public string Host { get; set; }
-        public bool IsInsertableOnFailure { get; set; }
     }
 }

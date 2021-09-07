@@ -14,11 +14,9 @@ namespace Transporter.MSSQLAdapter.Configs.Source.Implementations
 
         public override string ToString()
         {
-            return
-                $"Type : {Type} Options : {Options}";
+            return $"Type : {Type} Options : {Options}";
         }
 
         public string Host { get; set; }
-        public bool IsInsertableOnFailure { get; set; }   
     }
 }

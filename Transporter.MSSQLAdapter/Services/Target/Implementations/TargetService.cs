@@ -28,7 +28,7 @@ namespace Transporter.MSSQLAdapter.Services.Target.Implementations
             var insertData = data.ToObject<List<Dictionary<string, string>>>();
 
             if (insertData is null || !insertData.Any()) return;
-            
+
             var upperCasedInsertData = insertData
                 .Select(ConvertDictionaryKeysToUpperCase())
                 .ToList();
@@ -62,7 +62,8 @@ namespace Transporter.MSSQLAdapter.Services.Target.Implementations
             await ExecuteQueryWithParameters(connection, query, parameters);
         }
 
-        private static async Task ExecuteQueryWithParameters(IDbConnection connection, string query, List<DynamicParameters> parameters)
+        private static async Task ExecuteQueryWithParameters(IDbConnection connection, string query,
+            List<DynamicParameters> parameters)
         {
             try
             {
@@ -73,7 +74,7 @@ namespace Transporter.MSSQLAdapter.Services.Target.Implementations
                 Console.WriteLine(e.Message);
             }
         }
-        
+
         private static Func<Dictionary<string, string>, Dictionary<string, string>> ConvertKeysToId(string id)
         {
             return dictionary => dictionary.ToDictionary(x => id, x => x.Value);
@@ -95,19 +96,25 @@ namespace Transporter.MSSQLAdapter.Services.Target.Implementations
             return await Task.Run(() => parameters);
         }
 
-        private async Task<string> GetTargetInsertQueryAsync(IMsSqlTargetSettings setting,
+        private async Task<string> GetTargetInsertQueryAsync(IMsSqlTargetSettings settings,
             Dictionary<string, string> insertData)
         {
-            var excludedColumns = setting.Options.ExcludedColumns?.Split(",") ?? Array.Empty<string>();
+            var excludedColumns = GetExcludedColumnsFromSettings(settings);
             var queryData = insertData.Where(x => !excludedColumns.Contains(x.Key)).ToList();
             var query = new StringBuilder();
-            query.Append($"INSERT INTO {setting.Options.Schema}.{setting.Options.Table}");
+            query.Append($"INSERT INTO {settings.Options.Schema}.{settings.Options.Table}");
             query.AppendLine(" (" + string.Join(',', queryData.Select(x => x.Key)));
             query.AppendLine(" ) VALUES (");
             query.AppendLine(string.Join(',', queryData.Select(x => $"@{x.Key}")));
             query.AppendLine(" )");
 
             return await Task.FromResult(query.ToString());
+        }
+
+        private static IEnumerable<string> GetExcludedColumnsFromSettings(IMsSqlTargetSettings settings)
+        {
+            return settings.Options.ExcludedColumns?.Split(",").Select(x => x.ToUpper()) ??
+                   Array.Empty<string>();
         }
 
         private async Task<string> GetTargetInsertIdDataQueryAsync(IMsSqlTargetSettings setting,

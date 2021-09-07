@@ -14,8 +14,7 @@ namespace Transporter.MSSQLAdapter.Configs.Interim.Implementations
 
         public override string ToString()
         {
-            return
-                $"Type : {Type} Options : {Options}";
+            return $"Type : {Type} Options : {Options}";
         }
 
         public string Host { get; set; }

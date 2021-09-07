@@ -98,19 +98,33 @@ namespace Transporter.CouchbaseAdapter.Services.Target.Implementations
         {
             var collection = await GetCollectionAsync(settings.Options.ConnectionData, settings.Options.Bucket);
             var tasks = new List<Task<IMutationResult>>();
+            var excludedProperties = GetExcludedPropertiesFromSettings(settings).ToList();
             var keyProperty = settings.Options.KeyProperty;
 
             for (var i = 0; i < insertDataItems.Count; i++)
             {
                 var data = insertDataItems[i];
-                var id = ((JObject) data)[keyProperty].ToString();
+                var id = ((JObject)data)[keyProperty].ToString();
                 ((JObject)data).Remove(keyProperty);
-                
+
+                foreach (var excludedProperty in excludedProperties)
+                {
+                    if (((JObject)data).ContainsKey(excludedProperty))
+                    {
+                        ((JObject)data).Remove(excludedProperty);
+                    }
+                }
+
                 var task = collection.InsertAsync(id, data);
                 tasks.Add(task);
             }
 
             return tasks;
+        }
+
+        private static IEnumerable<string> GetExcludedPropertiesFromSettings(ICouchbaseTargetSettings settings)
+        {
+            return settings.Options.ExcludedProperties?.Split(",") ?? Array.Empty<string>();
         }
 
         private async Task<ICouchbaseCollection> GetCollectionAsync(ConnectionData connectionData, string bucket)
