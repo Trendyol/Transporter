@@ -54,7 +54,6 @@
       <Compile Remove="Transporter.Core\**" />
       <Compile Remove="Transporter.MSSQLAdapter\**" />
       <Compile Remove="Transporter.CouchbaseAdapter\**" />
-      <Compile Remove="Transporter.MSSQLDeleteAdapter\**" />
       <Compile Remove="Transporter.IntegrationTests\**" />
     </ItemGroup>
 
@@ -62,7 +61,6 @@
       <EmbeddedResource Remove="Transporter.Core\**" />
       <EmbeddedResource Remove="Transporter.MSSQLAdapter\**" />
       <EmbeddedResource Remove="Transporter.CouchbaseAdapter\**" />
-      <EmbeddedResource Remove="Transporter.MSSQLDeleteAdapter\**" />
       <EmbeddedResource Remove="Transporter.IntegrationTests\**" />
     </ItemGroup>
 
@@ -70,7 +68,6 @@
       <None Remove="Transporter.Core\**" />
       <None Remove="Transporter.MSSQLAdapter\**" />
       <None Remove="Transporter.CouchbaseAdapter\**" />
-      <None Remove="Transporter.MSSQLDeleteAdapter\**" />
       <None Remove="Transporter.IntegrationTests\**" />
       <None Update="appsettings.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -81,7 +78,6 @@
       <ProjectReference Include="Transporter.Core\Transporter.Core.csproj" />
       <ProjectReference Include="Transporter.CouchbaseAdapter\Transporter.CouchbaseAdapter.csproj" />
       <ProjectReference Include="Transporter.MSSQLAdapter\Transporter.MSSQLAdapter.csproj" />
-      <ProjectReference Include="Transporter.MSSQLDeleteAdapter\Transporter.MSSQLDeleteAdapter.csproj" />
     </ItemGroup>
 
 </Project>

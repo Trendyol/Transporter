@@ -17,7 +17,6 @@ using Transporter.Core.Utils;
 using Transporter.CouchbaseAdapter;
 using Transporter.MSSQLAdapter;
 using TransporterService.Jobs;
-using ServiceRegisterer = Transporter.MSSQLDeleteAdapter.ServiceRegisterer;
 
 namespace TransporterService
 {
@@ -37,7 +36,6 @@ namespace TransporterService
 
                     services.TransporterMsSqlAdapterRegister();
                     services.TransporterCouchbaseAdapterRegister();
-                    ServiceRegisterer.TransporterMsSqlDeleteAdapterRegister(services);
 
                     services.Configure<QuartzOptions>(hostContext.Configuration.GetSection("Quartz"));
                     services.AddSingleton<IAdapterFactory, AdapterFactory>();
