@@ -10,10 +10,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using Quartz;
-using Transporter.Core;
+using Transporter.Core.Configs.Base.Implementations;
+using Transporter.Core.Factories.Adapter.Implementations;
+using Transporter.Core.Factories.Adapter.Interfaces;
+using Transporter.Core.Utils;
 using Transporter.CouchbaseAdapter;
 using Transporter.MSSQLAdapter;
-using ServiceRegisterer = Transporter.MSSQLDeleteAdapter.ServiceRegisterer;
+using TransporterService.Jobs;
 
 namespace TransporterService
 {
@@ -33,41 +36,25 @@ namespace TransporterService
 
                     services.TransporterMsSqlAdapterRegister();
                     services.TransporterCouchbaseAdapterRegister();
-                    ServiceRegisterer.TransporterMsSqlDeleteAdapterRegister(services);
 
                     services.Configure<QuartzOptions>(hostContext.Configuration.GetSection("Quartz"));
                     services.AddSingleton<IAdapterFactory, AdapterFactory>();
 
                     services.AddQuartz(quartz =>
                     {
-                        // handy when part of cluster or you want to otherwise identify multiple schedulers
                         quartz.SchedulerId = "Scheduler-Core";
-
-                        // we take this from appsettings.json, just show it's possible
-                        // q.SchedulerName = "Quartz ASP.NET Core Sample Scheduler";
-                        // we could leave DI configuration intact and then jobs need to have public no-arg constructor
-                        // the MS DI is expected to produce transient job instances 
 
                         quartz.UseMicrosoftDependencyInjectionJobFactory(options =>
                         {
-                            // if we don't have the job in DI, allow fallback to configure via default constructor
                             options.AllowDefaultConstructor = false;
                         });
 
                         quartz.UseSimpleTypeLoader();
                         quartz.UseInMemoryStore();
                         quartz.UseDefaultThreadPool(tp => { tp.MaxConcurrency = 10; });
-
-                        // var jobOptionsList = hostContext.Configuration[Constants.JobListSectionKey]
-                        //     .ToObject<ICollection<JobSettings>>();
-                        var jobOptionsList = hostContext.Configuration.GetSection(Constants.JobListSectionKey)
-                            .Get<List<JobSettings>>();
-
-                        Console.Error.Write("jobOptionsList : " + jobOptionsList.ToJson());
-                        Console.Error.Write("hostContext : " +
-                                            hostContext.Configuration[Constants.JobListSectionKey]);
-
-                        jobOptionsList.ToList().ForEach(jobOptions => { InitializeQuartzJobs(quartz, jobOptions); });
+                        
+                        InitializePollingJobs(hostContext, quartz);
+                        InitializeTransferJobs(hostContext, quartz);
                     });
 
                     // Quartz.Extensions.Hosting hosting
@@ -79,14 +66,64 @@ namespace TransporterService
                 });
         }
 
-        private static void InitializeQuartzJobs(IServiceCollectionQuartzConfigurator quartzConfigurator,
-            JobSettings jobSettings)
+        private static void InitializePollingJobs(HostBuilderContext hostContext, IServiceCollectionQuartzConfigurator quartz)
         {
-            var jobDataMap = new JobDataMap((IDictionary) new Dictionary<string, object>
-                {{"jobSettings", jobSettings}});
+            var pollingJobSettings = GetPollingJobSettings(hostContext);
+            pollingJobSettings.ToList().ForEach(jobOptions => { InitializeQuartzJobsForTemporaryTable(quartz, jobOptions); });
+        }
+
+        private static void InitializeTransferJobs(HostBuilderContext hostContext, IServiceCollectionQuartzConfigurator quartz)
+        {
+            var transferJobSettings = GetTransferJobSettings(hostContext);
+            transferJobSettings.ToList()
+                .ForEach(jobOptions => { InitializeQuartzJobs(quartz, jobOptions); });
+        }
+
+        private static List<PollingJobSettings> GetPollingJobSettings(HostBuilderContext hostContext)
+        {
+            return hostContext.Configuration
+                .GetSection(Constants.PollingJobSettings)
+                .Get<List<PollingJobSettings>>();
+        }
+
+        private static List<TransferJobSettings> GetTransferJobSettings(HostBuilderContext hostContext)
+        {
+            return hostContext.Configuration
+                .GetSection(Constants.TransferJobSettings)
+                .Get<List<TransferJobSettings>>();
+        }
+
+        private static void InitializeQuartzJobs(IServiceCollectionQuartzConfigurator quartzConfigurator,
+            TransferJobSettings transferJobSettings)
+        {
+            var jobDataMap = new JobDataMap((IDictionary)new Dictionary<string, object>
+                { { "transferJobSettings", transferJobSettings } });
+            var jobKey = new JobKey(transferJobSettings.Name, transferJobSettings.Source.ToString());
+
+            quartzConfigurator.AddJob<TransferJob>(j => j
+                .StoreDurably()
+                .WithIdentity(jobKey)
+                .WithDescription(
+                    $"{transferJobSettings.Name} {transferJobSettings.Source} => {transferJobSettings.Target}")
+                .UsingJobData(jobDataMap)
+            );
+
+            quartzConfigurator.AddTrigger(t => t
+                .WithIdentity($"{jobKey} Cron Trigger")
+                .WithCronSchedule(transferJobSettings.Cron)
+                .ForJob(jobKey)
+                .StartNow());
+        }
+
+        private static void InitializeQuartzJobsForTemporaryTable(
+            IServiceCollectionQuartzConfigurator quartzConfigurator,
+            PollingJobSettings jobSettings)
+        {
+            var jobDataMap = new JobDataMap((IDictionary)new Dictionary<string, object>
+                { { "pollingJobSettings", jobSettings } });
             var jobKey = new JobKey(jobSettings.Name, jobSettings.Source.ToString());
 
-            quartzConfigurator.AddJob<CronJob>(j => j
+            quartzConfigurator.AddJob<PollingJob>(j => j
                 .StoreDurably()
                 .WithIdentity(jobKey)
                 .WithDescription($"{jobSettings.Name} {jobSettings.Source} => {jobSettings.Target}")
