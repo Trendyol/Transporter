@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Transporter.Core.Adapters.Base.Interfaces;
 using Transporter.Core.Adapters.Source.Interfaces;
 using Transporter.Core.Configs.Base.Interfaces;
@@ -75,24 +76,24 @@ namespace Transporter.CouchbaseAdapter.Adapters
 
         private ICouchbaseSourceSettings GetOptions(ITransferJobSettings transferJobSettings)
         {
-            var jobOptionsList = _configuration.GetSection(Constants.TransferJobSettings)
-                .Get<List<CouchbaseTransferJobSettings>>();
+            var jobOptionsList = JsonConvert.DeserializeObject<List<CouchbaseTransferJobSettings>>(_configuration
+                .GetSection(Constants.TransferJobSettings).Get<string>());
             var options = jobOptionsList.First(x => x.Name == transferJobSettings.Name);
             return (ICouchbaseSourceSettings)options.Source;
         }
 
         private ICouchbaseSourceSettings GetOptions(IPollingJobSettings jobSettings)
         {
-            var jobOptionsList = _configuration.GetSection(Constants.PollingJobSettings)
-                .Get<List<CouchbaseTransferJobSettings>>();
+            var jobOptionsList = JsonConvert.DeserializeObject<List<CouchbaseTransferJobSettings>>(_configuration
+                .GetSection(Constants.PollingJobSettings).Get<string>());
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
             return (ICouchbaseSourceSettings)options.Source;
         }
 
         private string GetTypeBySettings(IPollingJobSettings jobSettings)
         {
-            var jobOptionsList = _configuration.GetSection(Constants.PollingJobSettings)
-                .Get<List<CouchbaseTransferJobSettings>>();
+            var jobOptionsList = JsonConvert.DeserializeObject<List<CouchbaseTransferJobSettings>>(_configuration
+                .GetSection(Constants.PollingJobSettings).Get<string>());
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
             return options.Source?.Type;
         }

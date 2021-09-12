@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Transporter.Core.Adapters.Base.Interfaces;
 using Transporter.Core.Adapters.Interim.Interfaces;
 using Transporter.Core.Configs.Base.Interfaces;
@@ -24,7 +25,7 @@ namespace Transporter.MSSQLAdapter.Adapters
             _configuration = configuration;
             _interimService = interimService;
         }
-        
+
         public object Clone()
         {
             var result = MemberwiseClone() as IAdapter;
@@ -63,25 +64,27 @@ namespace Transporter.MSSQLAdapter.Adapters
         {
             await _interimService.DeleteAsync(_settings, ids);
         }
-        
+
         private IMsSqlInterimSettings GetOptions(ITransferJobSettings transferJobSettings)
         {
-            var jobOptionsList = _configuration.GetSection(Constants.TransferJobSettings).Get<List<MsSqlTransferJobSettings>>();
+            var jobOptionsList = JsonConvert.DeserializeObject<List<MsSqlTransferJobSettings>>(_configuration
+                .GetSection(Constants.TransferJobSettings).Get<string>());
             var options = jobOptionsList.First(x => x.Name == transferJobSettings.Name);
-            return (IMsSqlInterimSettings) options.Interim;
+            return (IMsSqlInterimSettings)options.Interim;
         }
-        
+
         private IMsSqlInterimSettings GetOptions(IPollingJobSettings jobSettings)
         {
-            var jobOptionsList = _configuration.GetSection(Constants.PollingJobSettings).Get<List<MsSqlTransferJobSettings>>();
+            var jobOptionsList = JsonConvert.DeserializeObject<List<MsSqlTransferJobSettings>>(_configuration
+                .GetSection(Constants.PollingJobSettings).Get<string>());
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
-            return (IMsSqlInterimSettings) options.Interim;
+            return (IMsSqlInterimSettings)options.Interim;
         }
-        
+
         private string GetTypeBySettings(IPollingJobSettings jobSettings)
         {
-            var jobOptionsList = _configuration.GetSection(Constants.PollingJobSettings)
-                .Get<List<MsSqlTransferJobSettings>>();
+            var jobOptionsList = JsonConvert.DeserializeObject<List<MsSqlTransferJobSettings>>(_configuration
+                .GetSection(Constants.PollingJobSettings).Get<string>());
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
             return options.Interim?.Type;
         }
