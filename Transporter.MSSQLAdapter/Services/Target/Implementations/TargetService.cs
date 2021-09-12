@@ -82,7 +82,12 @@ namespace Transporter.MSSQLAdapter.Services.Target.Implementations
 
         private static Func<Dictionary<string, string>, Dictionary<string, string>> ConvertDictionaryKeysToUpperCase()
         {
-            return dictionary => dictionary.ToDictionary(x => x.Key.ToUpper(), x => x.Value);
+            return dictionary => dictionary.ToDictionary(CapitalizeKey, x => x.Value);
+        }
+
+        private static string CapitalizeKey(KeyValuePair<string, string> x)
+        {
+            return char.ToUpper(x.Key[0]) + x.Key[1..];
         }
 
         private async Task<List<DynamicParameters>> GetParameters(List<Dictionary<string, string>> insertData)

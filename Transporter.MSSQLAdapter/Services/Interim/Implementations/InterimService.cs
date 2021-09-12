@@ -60,7 +60,7 @@ namespace Transporter.MSSQLAdapter.Services.Interim.Implementations
             query.AppendLine($"UPDATE TOP ({sqlOptions.BatchQuantity}) {sqlOptions.Schema}.{sqlOptions.Table}");
             query.AppendLine("SET Lmd=GETDATE() OUTPUT inserted.Id");
             query.AppendLine($"WHERE DataSourceName='{sqlOptions.DataSourceName}'");
-            query.AppendLine($"AND DATEDIFF(second, lmd, GETDATE()) > 5"); // TODO second minute olacak ileride.
+            query.AppendLine($"AND DATEDIFF(minute, lmd, GETDATE()) > 5");
 
             return await Task.FromResult(query.ToString());
         }

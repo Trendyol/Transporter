@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using NLog.Extensions.Logging;
 using Quartz;
 using Transporter.Core.Configs.Base.Implementations;
@@ -52,7 +53,7 @@ namespace TransporterService
                         quartz.UseSimpleTypeLoader();
                         quartz.UseInMemoryStore();
                         quartz.UseDefaultThreadPool(tp => { tp.MaxConcurrency = 10; });
-                        
+
                         InitializePollingJobs(hostContext, quartz);
                         InitializeTransferJobs(hostContext, quartz);
                     });
@@ -66,31 +67,23 @@ namespace TransporterService
                 });
         }
 
-        private static void InitializePollingJobs(HostBuilderContext hostContext, IServiceCollectionQuartzConfigurator quartz)
+        private static void InitializePollingJobs(HostBuilderContext hostContext,
+            IServiceCollectionQuartzConfigurator quartz)
         {
-            var pollingJobSettings = GetPollingJobSettings(hostContext);
-            pollingJobSettings.ToList().ForEach(jobOptions => { InitializeQuartzJobsForTemporaryTable(quartz, jobOptions); });
+            var pollingJobSettings = JsonConvert.DeserializeObject<List<PollingJobSettings>>(hostContext.Configuration
+                .GetSection(Constants.PollingJobSettings).Get<string>());
+            pollingJobSettings.ToList().ForEach(jobOptions =>
+            {
+                InitializeQuartzJobsForTemporaryTable(quartz, jobOptions);
+            });
         }
 
-        private static void InitializeTransferJobs(HostBuilderContext hostContext, IServiceCollectionQuartzConfigurator quartz)
+        private static void InitializeTransferJobs(HostBuilderContext hostContext,
+            IServiceCollectionQuartzConfigurator quartz)
         {
-            var transferJobSettings = GetTransferJobSettings(hostContext);
-            transferJobSettings.ToList()
-                .ForEach(jobOptions => { InitializeQuartzJobs(quartz, jobOptions); });
-        }
-
-        private static List<PollingJobSettings> GetPollingJobSettings(HostBuilderContext hostContext)
-        {
-            return hostContext.Configuration
-                .GetSection(Constants.PollingJobSettings)
-                .Get<List<PollingJobSettings>>();
-        }
-
-        private static List<TransferJobSettings> GetTransferJobSettings(HostBuilderContext hostContext)
-        {
-            return hostContext.Configuration
-                .GetSection(Constants.TransferJobSettings)
-                .Get<List<TransferJobSettings>>();
+            var transferJobSettings = JsonConvert.DeserializeObject<List<TransferJobSettings>>(hostContext.Configuration
+                .GetSection(Constants.TransferJobSettings).Get<string>());
+            transferJobSettings.ToList().ForEach(jobOptions => { InitializeQuartzJobs(quartz, jobOptions); });
         }
 
         private static void InitializeQuartzJobs(IServiceCollectionQuartzConfigurator quartzConfigurator,
