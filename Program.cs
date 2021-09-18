@@ -17,6 +17,7 @@ using Transporter.Core.Factories.Adapter.Interfaces;
 using Transporter.Core.Utils;
 using Transporter.CouchbaseAdapter;
 using Transporter.MSSQLAdapter;
+using TransporterService.Daemon;
 using TransporterService.Jobs;
 
 namespace TransporterService
@@ -40,6 +41,8 @@ namespace TransporterService
 
                     services.Configure<QuartzOptions>(hostContext.Configuration.GetSection("Quartz"));
                     services.AddSingleton<IAdapterFactory, AdapterFactory>();
+                    
+                    services.AddHostedService<HealthCheckDaemon>();
 
                     services.AddQuartz(quartz =>
                     {
