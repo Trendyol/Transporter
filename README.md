@@ -21,7 +21,7 @@ In database processes, data safety is our first concern. In any of transferring 
 
 <!-- GETTING STARTED -->
 ## Getting Started
-To use Transporter, there are config examples in "examples/configs" folder. Transporter is a dockerized project, so you can deploy to a Kubernetes cluster if you want.
+To use Transporter, there are config examples in "examples/configs" folder. Transporter is a dockerized project, so you can deploy to a Kubernetes cluster if you want. There are two string config keys that should be given to Transporter, "PollingJobSettings" and "TransferJobSettings" as strings. You can use online sites like [Json Online Converter](https://tools.knowledgewalls.com/jsontostring) to convert your JSON file to string.
 
 ## Roadmap
 See the [open issues]([https://github.com/github_username/repo_name/issues](https://github.com/github_username/repo_name/issues)) for a list of proposed features (and known issues).
