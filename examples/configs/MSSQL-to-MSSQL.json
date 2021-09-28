@@ -1,0 +1,65 @@
+{
+  "TransferJobSettings": [
+    {
+      "Name": "Example Transfer Job Name",
+      "Cron": "0/20 * * ? * *",
+      "Source": {
+        "Type": "mssql",
+        "Host": "example-source-host",
+        "Options": {
+          "ConnectionString": "",
+          "Schema": "[Example]",
+          "Table": "[ExampleSourceTable]",
+          "IdColumn": "Id"
+        }
+      },
+      "Interim": {
+        "Type": "mssql",
+        "Host": "example-target-host",
+        "Options": {
+          "ConnectionString": "",
+          "Schema": "[Example]",
+          "Table": "[ExampleInterimTable]",
+          "BatchQuantity": 1000,
+          "DataSourceName": "[Example].[ExampleSourceTable]"
+        }
+      },
+      "Target": {
+        "Type": "mssql",
+        "Host": "example-target-host",
+        "Options": {
+          "ConnectionString": "",
+          "Schema": "[ExampleTarget]",
+          "Table": "[ExampleTargetTable]"
+        }
+      }
+    }
+  ],
+  "PollingJobSettings": [
+    {
+      "Name": "Example Polling Job Name",
+      "Cron": "0/20 * * ? * *",
+      "Source": {
+        "Type": "mssql",
+        "Host": "example-source-host",
+        "Options": {
+          "ConnectionString": "",
+          "Schema": "[Example]",
+          "Table": "[ExampleSourceTable]",
+          "BatchQuantity": 1000,
+          "IdColumn": "Id",
+          "Condition": "ExampleDateTimeColumn < GETDATE()"
+        }
+      },
+      "Target": {
+        "Type": "mssql",
+        "Host": "example-target-host",
+        "Options": {
+          "ConnectionString": "",
+          "Schema": "[ExampleTarget]",
+          "Table": "[ExampleTargetTable]"
+        }
+      }
+    }
+  ]
+}

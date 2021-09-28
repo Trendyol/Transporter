@@ -1,0 +1,78 @@
+{
+  "TransferJobSettings": [
+    {
+      "Name": "Example Transfer Job Name",
+      "Cron": "0/30 * * ? * *",
+      "Source": {
+        "Host": "test-host-mssql",
+        "Type": "mssql",
+        "Options": {
+          "ConnectionString": "",
+          "Schema": "[Example]",
+          "Table": "[ExampleSourceTable]",
+          "IdColumn": "IdColumn"
+        }
+      },
+      "Interim": {
+        "Host": "example-couchbase-host",
+        "Type": "Couchbase",
+        "Options": {
+          "Bucket": "example-interim-bucket",
+          "ConnectionData": {
+            "Hosts": "example-couchbase-host",
+            "Username": "username",
+            "Password": "password",
+            "UiPort": 8091
+          },
+          "BatchQuantity": 1000,
+          "DataSourceName": "[Example].[ExampleSourceBucket]"
+        }
+      },
+      "Target": {
+        "Host": "example-couchbase-host",
+        "Type": "Couchbase",
+        "Options": {
+          "Bucket": "example-target-bucket",
+          "KeyProperty": "IdColumn",
+          "ConnectionData": {
+            "Hosts": "exaxmple-couchbase-host",
+            "Username": "username",
+            "Password": "password",
+            "UiPort": 8091
+          }
+        }
+      }
+    }
+  ],
+  "PollingJobSettings": [
+    {
+      "Name": "Example Polling Job Name",
+      "Cron": "0/30 * * ? * *",
+      "Source": {
+        "Type": "mssql",
+        "Host": "test-host-mssql",
+        "Options": {
+          "ConnectionString": "",
+          "Schema": "[Example]",
+          "Table": "[ExampleSourceTable]",
+          "BatchQuantity": 1000,
+          "IdColumn": "Id",
+          "Condition": "ExampleColumn = 1"
+        }
+      },
+      "Target": {
+        "Host": "example-couchbase-host",
+        "Type": "Couchbase",
+        "Options": {
+          "Bucket": "example-interim-bucket",
+          "ConnectionData": {
+            "Hosts": "example-couchbase-host",
+            "Username": "username",
+            "Password": "password",
+            "UiPort": 8091
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "TransferJobSettings": [
+    {
+      "Name": "Example Transfer Job Name",
+      "Cron": "0/20 * * ? * *",
+      "Source": {
+        "Host": "example-source-host",
+        "Type": "Couchbase",
+        "Options": {
+          "Bucket": "example-source-bucket",
+          "ConnectionData": {
+            "Hosts": "example-source-host",
+            "Username": "username",
+            "Password": "password",
+            "UiPort": 8091
+          },
+          "BatchQuantity": 1000
+        }
+      },
+      "Interim": {
+        "Host": "example-target-host",
+        "Type": "Couchbase",
+        "Options": {
+          "Bucket": "example-interim-bucket",
+          "ConnectionData": {
+            "Hosts": "example-target-host",
+            "Username": "username",
+            "Password": "password",
+            "UiPort": 8091
+          },
+          "BatchQuantity": 1000,
+          "DataSourceName": "example-source-host"
+        }
+      },
+      "Target": {
+        "Host": "example-target-host",
+        "Type": "Couchbase",
+        "Options": {
+          "Bucket": "example-target-bucket",
+          "ConnectionData": {
+            "Hosts": "example-target-host",
+            "Username": "username",
+            "Password": "password",
+            "UiPort": 8091
+          },
+          "KeyProperty": "id"
+        }
+      }
+    }
+  ],
+  "PollingJobSettings": [
+    {
+      "Name": "Example Polling Job Name",
+      "Cron": "0/20 * * ? * *",
+      "Source": {
+        "Host": "example-source-host",
+        "Type": "Couchbase",
+        "Options": {
+          "Bucket": "example-source-host",
+          "ConnectionData": {
+            "Hosts": "example-source-host",
+            "Username": "username",
+            "Password": "password",
+            "UiPort": 8091
+          },
+          "BatchQuantity": 1000,
+          "Condition": "type = 'Example'"
+        }
+      },
+      "Target": {
+        "Host": "example-target-host",
+        "Type": "Couchbase",
+        "Options": {
+          "Bucket": "example-interim-bucket",
+          "ConnectionData": {
+            "Hosts": "example-target-host",
+            "Username": "username",
+            "Password": "password",
+            "UiPort": 8091
+          }
+        }
+      }
+    }
+  ]
+}
