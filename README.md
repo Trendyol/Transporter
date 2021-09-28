@@ -124,7 +124,7 @@ Distributed under the MIT License. See [`LICENSE`](https://choosealicense.com/li
 
 ## Contact
 
-Fatiha Beqirovski - [Github](https://github.com/FatihaBeqirovski) - [fatiha.beqirovski@trendyol.com](mailto:fatiha.beqirovski@trendyol.com)
+Fatiha Beqirovski Polattimur - [Github](https://github.com/FatihaBeqirovski) - [fatiha.beqirovski@trendyol.com](mailto:fatiha.beqirovski@trendyol.com)
 
 
 Mehmet Fırat Kömürcü - [Github](https://github.com/MehmetFiratKomurcu) - [firat.komurcu@trendyol.com](mailto:firat.komurcu@trendyol.com)
