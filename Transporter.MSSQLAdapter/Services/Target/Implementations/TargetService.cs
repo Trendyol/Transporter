@@ -106,7 +106,11 @@ namespace Transporter.MSSQLAdapter.Services.Target.Implementations
         {
             var excludedColumns = GetExcludedColumnsFromSettings(settings);
             var queryData = insertData.Where(x => !excludedColumns.Contains(x.Key)).ToList();
+            var idColumn = settings.Options.IdColumn;
             var query = new StringBuilder();
+
+            query.Append(
+                $"IF NOT EXISTS (SELECT {idColumn} FROM {settings.Options.Schema}.{settings.Options.Table} WHERE {idColumn} = @{idColumn}) ");
             query.Append($"INSERT INTO {settings.Options.Schema}.{settings.Options.Table}");
             query.AppendLine(" (" + string.Join(',', queryData.Select(x => x.Key)));
             query.AppendLine(" ) VALUES (");
