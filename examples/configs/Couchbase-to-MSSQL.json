@@ -34,7 +34,8 @@
         "Options": {
           "ConnectionString": "",
           "Schema": "[Example]",
-          "Table": "[ExampleTargetTable]"
+          "Table": "[ExampleTargetTable]",
+          "IdColumn": "IdColumnName"
         }
       }
     }
