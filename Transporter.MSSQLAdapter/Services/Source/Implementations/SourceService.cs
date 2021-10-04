@@ -69,7 +69,7 @@ namespace Transporter.MSSQLAdapter.Services.Source.Implementations
             var sqlOptions = settings.Options;
             var query = new StringBuilder();
             query.AppendLine($"SELECT TOP({sqlOptions.BatchQuantity}) {sqlOptions.IdColumn} FROM {sqlOptions.Schema}.{sqlOptions.Table}");
-            query.AppendLine($"WHERE ({(string.IsNullOrEmpty(sqlOptions.Condition) ? "1=1" : sqlOptions.Condition)})");
+            query.AppendLine($"WHERE {(string.IsNullOrEmpty(sqlOptions.Condition) ? "1=1" : sqlOptions.Condition)}");
 
             return await Task.FromResult(query.ToString());
         }
