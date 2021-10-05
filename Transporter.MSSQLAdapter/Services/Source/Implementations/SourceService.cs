@@ -39,6 +39,7 @@ namespace Transporter.MSSQLAdapter.Services.Source.Implementations
 
         public async Task<IEnumerable<dynamic>> GetIdDataAsync(IMsSqlSourceSettings settings)
         {
+            Console.WriteLine($"opening connection. settings: {settings.ToJson()}");
             using var connection =
                 _dbConnectionFactory.GetConnection(settings.Options.ConnectionString);
             Console.WriteLine($"Job Options {settings.Options.ToJson()}, Conn State {connection.State}");
