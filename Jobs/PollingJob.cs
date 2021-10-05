@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Quartz;
@@ -37,7 +38,10 @@ namespace TransporterService.Jobs
 
                 var source = await _adapterFactory.GetAsync<ISourceAdapter>(PollingJobSettings);
                 var target = await _adapterFactory.GetAsync<ITargetAdapter>(PollingJobSettings);
+                
+                Console.WriteLine("Getting source data in Polling Job");
                 sourceData = await source.GetIdsAsync();
+                Console.WriteLine($"First source data of Polling Job: {sourceData.FirstOrDefault()}");
 
                 if (target is not null)
                     await target.SetInterimTableAsync(sourceData.ToJson(), source.GetDataSourceName());
