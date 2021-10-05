@@ -75,7 +75,7 @@ namespace TransporterService
         {
             var pollingJobSettings = JsonConvert.DeserializeObject<List<PollingJobSettings>>(hostContext.Configuration
                 .GetSection(Constants.PollingJobSettings).Get<string>());
-            pollingJobSettings.ToList().ForEach(jobOptions =>
+            pollingJobSettings?.ToList().ForEach(jobOptions =>
             {
                 Console.WriteLine($"Creating Job {jobOptions.Name}");
                 InitializeQuartzJobsForTemporaryTable(quartz, jobOptions);
@@ -87,7 +87,7 @@ namespace TransporterService
         {
             var transferJobSettings = JsonConvert.DeserializeObject<List<TransferJobSettings>>(hostContext.Configuration
                 .GetSection(Constants.TransferJobSettings).Get<string>());
-            transferJobSettings.ToList().ForEach(jobOptions => { InitializeQuartzJobs(quartz, jobOptions); });
+            transferJobSettings?.ToList().ForEach(jobOptions => { InitializeQuartzJobs(quartz, jobOptions); });
         }
 
         private static void InitializeQuartzJobs(IServiceCollectionQuartzConfigurator quartzConfigurator,
