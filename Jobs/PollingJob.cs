@@ -32,6 +32,7 @@ namespace TransporterService.Jobs
             IEnumerable<dynamic> sourceData = new List<dynamic>();
             try
             {
+                Console.WriteLine($"Polling Job Starting. Name: {PollingJobSettings.Name}");
                 PingSourceAndTargetHosts();
 
                 var source = await _adapterFactory.GetAsync<ISourceAdapter>(PollingJobSettings);

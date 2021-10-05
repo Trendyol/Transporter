@@ -77,6 +77,7 @@ namespace TransporterService
                 .GetSection(Constants.PollingJobSettings).Get<string>());
             pollingJobSettings.ToList().ForEach(jobOptions =>
             {
+                Console.WriteLine($"Creating Job {jobOptions.Name}");
                 InitializeQuartzJobsForTemporaryTable(quartz, jobOptions);
             });
         }
