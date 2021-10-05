@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
+using Transporter.Core.Utils;
 using Transporter.MSSQLAdapter.Configs.Source.Interfaces;
 using Transporter.MSSQLAdapter.Data.Interfaces;
 using Transporter.MSSQLAdapter.Services.Source.Interfaces;
@@ -39,8 +41,11 @@ namespace Transporter.MSSQLAdapter.Services.Source.Implementations
         {
             using var connection =
                 _dbConnectionFactory.GetConnection(settings.Options.ConnectionString);
+            Console.WriteLine($"Job Options {settings.Options.ToJson()}, Conn State {connection.State}");
             var query = await GetSourceIdDataQueryAsync(settings);
+            Console.WriteLine($"SQL query: {query}, Conn State: {connection.State}");
             var result = await connection.QueryAsync<dynamic>(query);
+            Console.WriteLine($"Conn State: {connection.State}");
             return result;
         }
 
