@@ -34,7 +34,6 @@ namespace TransporterService.Jobs
             IEnumerable<dynamic> sourceData = new List<dynamic>();
             try
             {
-                Console.WriteLine($"Transfer Job Starting. Name: {TransferJobSettings.Name}");
                 PingSourceAndTargetHosts();
 
                 var interim = await _adapterFactory.GetAsync<IInterimAdapter>(TransferJobSettings);

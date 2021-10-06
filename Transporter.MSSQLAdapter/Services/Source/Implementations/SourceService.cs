@@ -39,14 +39,10 @@ namespace Transporter.MSSQLAdapter.Services.Source.Implementations
 
         public async Task<IEnumerable<dynamic>> GetIdDataAsync(IMsSqlSourceSettings settings)
         {
-            Console.WriteLine($"opening connection. settings: {settings.ToJson()}");
             using var connection =
                 _dbConnectionFactory.GetConnection(settings.Options.ConnectionString);
-            Console.WriteLine($"Job Options {settings.Options.ToJson()}, Conn State {connection.State}");
             var query = await GetSourceIdDataQueryAsync(settings);
-            Console.WriteLine($"SQL query: {query}, Conn State: {connection.State}");
             var result = await connection.QueryAsync<dynamic>(query);
-            Console.WriteLine($"Conn State: {connection.State}");
             return result;
         }
 

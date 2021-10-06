@@ -33,16 +33,12 @@ namespace TransporterService.Jobs
             IEnumerable<dynamic> sourceData = new List<dynamic>();
             try
             {
-                Console.WriteLine($"Polling Job Starting. Name: {PollingJobSettings.Name}");
                 PingSourceAndTargetHosts();
 
                 var source = await _adapterFactory.GetAsync<ISourceAdapter>(PollingJobSettings);
                 var target = await _adapterFactory.GetAsync<ITargetAdapter>(PollingJobSettings);
 
-                Console.WriteLine($"Getting source data in Polling Job. Name: {PollingJobSettings.Name}");
                 sourceData = await source.GetIdsAsync();
-                Console.WriteLine(
-                    $"First source data of Polling Job: {sourceData.FirstOrDefault()}. Name: {PollingJobSettings.Name}");
 
                 if (target is not null)
                     await target.SetInterimTableAsync(sourceData.ToJson(), source.GetDataSourceName());
