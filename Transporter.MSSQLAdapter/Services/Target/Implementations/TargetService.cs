@@ -105,7 +105,7 @@ namespace Transporter.MSSQLAdapter.Services.Target.Implementations
             Dictionary<string, string> insertData)
         {
             var excludedColumns = GetExcludedColumnsFromSettings(settings);
-            var queryData = insertData.Where(x => !excludedColumns.Contains(x.Key)).ToList();
+            var queryData = insertData.Where(x => !excludedColumns.Contains(x.Key.ToUpper())).ToList();
             var idColumn = settings.Options.IdColumn;
             var query = new StringBuilder();
 
