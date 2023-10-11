@@ -12,7 +12,7 @@ We developed this tool because we needed to archive our high throughput tables. 
 
 #### The How?
 
-Transporter has two important concepts; Source and Target. As inferred by names our goal is to move data from Source to Target. If there is no Target specified the transporter will perform only delete operation on Source. Each transporting operation corresponds to a json object. Using Quartz from each json object a cron job is produced.
+Transporter has two important concepts; Source and Target. As inferred by names our goal is to move data from Source to Target. Each transporting operation corresponds to a json object. Using Quartz from each json object a cron job is produced.
 
 
 ![Transporter](images/Transporter.png)
