@@ -8,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using NLog.Extensions.Logging;
 using Quartz;
 using Transporter.Core.Configs.Base.Implementations;
@@ -32,6 +31,11 @@ namespace TransporterService
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((_, configurationBuilder) =>
+                {
+                    configurationBuilder.AddJsonFile("configs.json", optional: true, true);
+                    configurationBuilder.AddJsonFile("secrets.json", optional: true, true);
+                })
                 .ConfigureServices((hostContext, services) =>
                 {
                     ConfigureLogger(hostContext, services);
@@ -73,9 +77,9 @@ namespace TransporterService
         private static void InitializePollingJobs(HostBuilderContext hostContext,
             IServiceCollectionQuartzConfigurator quartz)
         {
-            var pollingJobSettings = JsonConvert.DeserializeObject<List<PollingJobSettings>>(hostContext.Configuration
-                .GetSection(Constants.PollingJobSettings).Get<string>());
-            pollingJobSettings?.ToList().ForEach(jobOptions =>
+            var pollingJobSettings = new List<PollingJobSettings>();
+            hostContext.Configuration.GetSection(Constants.PollingJobSettings).Bind(pollingJobSettings);
+            pollingJobSettings.ToList().ForEach(jobOptions =>
             {
                 Console.WriteLine($"Creating Job {jobOptions.Name}");
                 InitializeQuartzJobsForTemporaryTable(quartz, jobOptions);
@@ -85,9 +89,9 @@ namespace TransporterService
         private static void InitializeTransferJobs(HostBuilderContext hostContext,
             IServiceCollectionQuartzConfigurator quartz)
         {
-            var transferJobSettings = JsonConvert.DeserializeObject<List<TransferJobSettings>>(hostContext.Configuration
-                .GetSection(Constants.TransferJobSettings).Get<string>());
-            transferJobSettings?.ToList().ForEach(jobOptions => { InitializeQuartzJobs(quartz, jobOptions); });
+            var transferJobSettings = new List<TransferJobSettings>();
+            hostContext.Configuration.GetSection(Constants.TransferJobSettings).Bind(transferJobSettings);
+            transferJobSettings.ToList().ForEach(jobOptions => { InitializeQuartzJobs(quartz, jobOptions); });
         }
 
         private static void InitializeQuartzJobs(IServiceCollectionQuartzConfigurator quartzConfigurator,
