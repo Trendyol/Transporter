@@ -33,7 +33,6 @@ namespace TransporterService
             return Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((_, configurationBuilder) =>
                 {
-                    configurationBuilder.AddJsonFile("configs/configs.json", optional: true, true);
                     configurationBuilder.AddJsonFile("configs/secrets.json", optional: true, true);
                 })
                 .ConfigureServices((hostContext, services) =>

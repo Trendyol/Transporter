@@ -67,24 +67,24 @@ namespace Transporter.MSSQLAdapter.Adapters
 
         private IMsSqlTargetSettings GetOptions(IPollingJobSettings jobSettings)
         {
-            var jobOptionsList = JsonConvert.DeserializeObject<List<MsSqlTransferJobSettings>>(_configuration
-                .GetSection(Constants.PollingJobSettings).Get<string>());
+            var jobOptionsList = _configuration
+                .GetSection(Constants.PollingJobSettings).Get<List<MsSqlTransferJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
             return (IMsSqlTargetSettings)options.Target;
         }
 
         private IMsSqlTargetSettings GetOptions(ITransferJobSettings transferJobSettings)
         {
-            var jobOptionsList = JsonConvert.DeserializeObject<List<MsSqlTransferJobSettings>>(_configuration
-                .GetSection(Constants.TransferJobSettings).Get<string>());
+            var jobOptionsList = _configuration
+                .GetSection(Constants.TransferJobSettings).Get<List<MsSqlTransferJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == transferJobSettings.Name);
             return (IMsSqlTargetSettings)options.Target;
         }
 
         private string GetTypeBySettings(IPollingJobSettings jobSettings)
         {
-            var jobOptionsList = JsonConvert.DeserializeObject<List<MsSqlTransferJobSettings>>(_configuration
-                .GetSection(Constants.PollingJobSettings).Get<string>());
+            var jobOptionsList = _configuration
+                .GetSection(Constants.PollingJobSettings).Get<List<MsSqlTransferJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
             return options.Target?.Type;
         }

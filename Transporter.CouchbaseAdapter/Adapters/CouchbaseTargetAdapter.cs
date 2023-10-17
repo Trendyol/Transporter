@@ -66,24 +66,24 @@ namespace Transporter.CouchbaseAdapter.Adapters
 
         private ICouchbaseTargetSettings GetOptions(IPollingJobSettings jobSettings)
         {
-            var jobOptionsList = JsonConvert.DeserializeObject<List<CouchbaseTransferJobSettings>>(_configuration
-                .GetSection(Constants.PollingJobSettings).Get<string>());
+            var jobOptionsList = _configuration
+                .GetSection(Constants.PollingJobSettings).Get<List<CouchbaseTransferJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
             return (ICouchbaseTargetSettings)options.Target;
         }
 
         private string GetTypeBySettings(IPollingJobSettings jobSettings)
         {
-            var jobOptionsList = JsonConvert.DeserializeObject<List<CouchbaseTransferJobSettings>>(_configuration
-                .GetSection(Constants.PollingJobSettings).Get<string>());
+            var jobOptionsList = _configuration
+                .GetSection(Constants.PollingJobSettings).Get<List<CouchbaseTransferJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == jobSettings.Name);
             return options.Target?.Type;
         }
 
         private ICouchbaseTargetSettings GetOptions(ITransferJobSettings transferJobSettings)
         {
-            var jobOptionsList = JsonConvert.DeserializeObject<List<CouchbaseTransferJobSettings>>(_configuration
-                .GetSection(Constants.TransferJobSettings).Get<string>());
+            var jobOptionsList = _configuration
+                .GetSection(Constants.TransferJobSettings).Get<List<CouchbaseTransferJobSettings>>();
             var options = jobOptionsList.First(x => x.Name == transferJobSettings.Name);
             return (ICouchbaseTargetSettings)options.Target;
         }
