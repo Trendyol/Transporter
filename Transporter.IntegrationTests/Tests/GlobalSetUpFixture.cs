@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using Transporter.IntegrationTests.Containers;
 
-namespace Transporter.IntegrationTests.Tests.Couchbase_MSSQL
+namespace Transporter.IntegrationTests.Tests
 {
     [SetUpFixture]
     public class GlobalSetUpFixture

@@ -17,10 +17,12 @@ namespace Transporter.MSSQLAdapter.Services.Target.Implementations
     public class TargetService : ITargetService
     {
         private readonly IDbConnectionFactory _dbConnectionFactory;
-
-        public TargetService(IDbConnectionFactory dbConnectionFactory)
+        private readonly IDateTimeProvider _dateTimeProvider;
+        
+        public TargetService(IDbConnectionFactory dbConnectionFactory, IDateTimeProvider dateTimeProvider)
         {
             _dbConnectionFactory = dbConnectionFactory;
+            _dateTimeProvider = dateTimeProvider;
         }
 
         public async Task SetTargetDataAsync(IMsSqlTargetSettings setting, string data)
@@ -51,7 +53,7 @@ namespace Transporter.MSSQLAdapter.Services.Target.Implementations
 
             foreach (var dictionary in upperCasedInsertData)
             {
-                dictionary.Add("Lmd", DateTime.Now.ToString(CultureInfo.InvariantCulture));
+                dictionary.Add("Lmd", _dateTimeProvider.Now.ToString(CultureInfo.InvariantCulture));
                 dictionary.Add("DataSourceName", dataSourceName);
             }
 

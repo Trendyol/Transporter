@@ -17,11 +17,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Tests\Couchbase-Couchbase" />
-      <Folder Include="Tests\MSSQL-MSSQL" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\Transporter.Service.csproj" />
     </ItemGroup>
 

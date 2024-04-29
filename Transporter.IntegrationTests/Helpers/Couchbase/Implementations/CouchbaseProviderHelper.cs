@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Couchbase;
 using Couchbase.Core.Exceptions.KeyValue;
@@ -29,7 +30,22 @@ namespace Transporter.IntegrationTests.Helpers.Couchbase.Implementations
             var getResult = await GetResultAsync(collection, id);
             return getResult?.ContentAs<T>();
         }
-
+        
+        public async Task CreateIndexAsync(ConnectionData connectionData, string bucketName, string indexName, IEnumerable<string> fields)
+        {
+            await _bucketProvider.CreateIndexAsync(connectionData, bucketName, indexName, fields);
+        }
+        
+        public async Task CreatePrimaryIndexAsync(ConnectionData connectionData, string bucketName)
+        {
+            await _bucketProvider.CreatePrimaryIndexAsync(connectionData, bucketName);
+        }
+        
+        public async Task CreateBucketAsync(ConnectionData connectionData, string bucketName)
+        {
+            await _bucketProvider.CreateBucketAsync(connectionData, bucketName);
+        }
+        
         private async Task<IGetResult> GetResultAsync(ICouchbaseCollection collection, string id)
         {
             try
@@ -48,7 +64,7 @@ namespace Transporter.IntegrationTests.Helpers.Couchbase.Implementations
             return await (await GetBucketAsync(connectionData, bucket)).DefaultCollectionAsync();
         }
 
-        private Task<IBucket> GetBucketAsync(ConnectionData connectionData, string bucket)
+        public Task<IBucket> GetBucketAsync(ConnectionData connectionData, string bucket)
         {
             return _bucketProvider.GetBucket(connectionData, bucket);
         }
