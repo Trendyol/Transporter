@@ -96,7 +96,7 @@ namespace Transporter.CouchbaseAdapter.Services.Interim.Implementations
 
         private int GetTimeDifferenceThreshold()
         {
-            return _configuration.GetSection(Constants.TimeDifferenceThreshold).Exists() ? _configuration.GetValue<int>(Constants.TimeDifferenceThreshold)  : 5;
+            return _configuration.GetSection(Constants.TimeDifferenceThreshold).Exists() ? _configuration.GetValue<int>(Constants.TimeDifferenceThreshold) : 5;
         }
 
         private async Task<ICouchbaseCollection> GetCollectionAsync(ConnectionData connectionData, string bucket)

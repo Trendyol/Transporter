@@ -34,7 +34,7 @@ namespace Transporter.IntegrationTests.Tests.Couchbase_MSSQL
         [Test]
         public async Task Transporter_ShouldTransportData()
         {
-            //Arrange
+            //Arrange & Act
             await using var connection = new SqlConnection(MssqlConnectionString);
             connection.Open();
 
@@ -46,10 +46,8 @@ namespace Transporter.IntegrationTests.Tests.Couchbase_MSSQL
             await connection.ExecuteAsync("Create Table dbo.TestTable_Interim_Mssql (dataSourceName nvarchar(max), lmd DateTime, Id int)");
             await connection.ExecuteAsync("Create Table dbo.TestTable_Target_Mssql_Mssql (Id nvarchar(max), Age int)");
             
-            var configSettings = GetConfigSettings();
-            
             var configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection(configSettings)
+                .AddJsonFile(JobConstants.MsSqlToMsSql.AppSettingsFileName)
                 .Build();
             var mockDateTimeProvider = new Mock<IDateTimeProvider>();
             mockDateTimeProvider.Setup(m => m.Now).Returns(DateTime.UtcNow.AddMinutes(-5));
@@ -72,50 +70,6 @@ namespace Transporter.IntegrationTests.Tests.Couchbase_MSSQL
             //Verify
             var userFromTargetTable = await connection.QueryFirstAsync<UserClass>("SELECT Id FROM [dbo].[TestTable_Target_Mssql_Mssql]");
             id.Should().Be(userFromTargetTable.Id);
-        }
-
-        private Dictionary<string, string> GetConfigSettings()
-        {
-            var configSettings = new Dictionary<string, string>
-            {
-                { "PollingJobSettings:0:Name",CreateFixture<string>()},
-                { "PollingJobSettings:0:Cron",JobConstants.MsSqlToMsSql.PollingJobSettingsCron},
-                { "PollingJobSettings:0:Source:Type",ContainerConstants.MsSql.Type},
-                { "PollingJobSettings:0:Source:Host",ContainerConstants.MsSql.Localhost},
-                { "PollingJobSettings:0:Source:Options:ConnectionString",MssqlConnectionString},
-                { "PollingJobSettings:0:Source:Options:Schema",MssqlSchemaName},
-                { "PollingJobSettings:0:Source:Options:Table",JobConstants.MsSqlToMsSql.SourceTableName},
-                { "PollingJobSettings:0:Source:Options:IdColumn",JobConstants.MsSqlToMsSql.IdColumn},
-                { "PollingJobSettings:0:Source:Options:Condition",string.Empty},
-                { "PollingJobSettings:0:Source:Options:BatchQuantity",ContainerConstants.BatchQuantity.ToString()},
-                { "PollingJobSettings:0:Target:Host",ContainerConstants.MsSql.Localhost},
-                { "PollingJobSettings:0:Target:Type",ContainerConstants.MsSql.Type},
-                { "PollingJobSettings:0:Target:Options:ConnectionString",MssqlConnectionString},
-                { "PollingJobSettings:0:Target:Options:Schema",MssqlSchemaName},
-                { "PollingJobSettings:0:Target:Options:Table",JobConstants.MsSqlToMsSql.InterimTableName},
-                { "TransferJobSettings:0:Name", CreateFixture<string>() },
-                { "TransferJobSettings:0:Cron", JobConstants.MsSqlToMsSql.TransferJobSettingsCron},
-                { "TransferJobSettings:0:Source:Host", ContainerConstants.MsSql.Localhost},
-                { "TransferJobSettings:0:Source:Type", ContainerConstants.MsSql.Type},
-                { "TransferJobSettings:0:Source:Options:ConnectionString", MssqlConnectionString},
-                { "TransferJobSettings:0:Source:Options:Schema", MssqlSchemaName},
-                { "TransferJobSettings:0:Source:Options:Table", JobConstants.MsSqlToMsSql.SourceTableName},
-                { "TransferJobSettings:0:Source:Options:IdColumn", JobConstants.MsSqlToMsSql.IdColumn},
-                { "TransferJobSettings:0:Interim:Host", ContainerConstants.MsSql.Localhost},
-                { "TransferJobSettings:0:Interim:Type",ContainerConstants.MsSql.Type},
-                { "TransferJobSettings:0:Interim:Options:ConnectionString", MssqlConnectionString},
-                { "TransferJobSettings:0:Interim:Options:Schema", MssqlSchemaName},
-                { "TransferJobSettings:0:Interim:Options:Table", JobConstants.MsSqlToMsSql.InterimTableName},
-                { "TransferJobSettings:0:Interim:Options:DataSourceName", $"{MssqlSchemaName}.{JobConstants.MsSqlToMsSql.SourceTableName}"},
-                { "TransferJobSettings:0:Interim:Options:BatchQuantity", ContainerConstants.BatchQuantity.ToString()},
-                { "TransferJobSettings:0:Target:Host", ContainerConstants.MsSql.Localhost},
-                { "TransferJobSettings:0:Target:Type", ContainerConstants.MsSql.Type},
-                { "TransferJobSettings:0:Target:Options:ConnectionString", MssqlConnectionString},
-                { "TransferJobSettings:0:Target:Options::Schema", MssqlSchemaName},
-                { "TransferJobSettings:0:Target:Options:Table",JobConstants.MsSqlToMsSql.TargetTableName},
-                { "TransferJobSettings:0:Target:Options:IdColumn", JobConstants.MsSqlToMsSql.IdColumn.ToLowerInvariant()},
-            };
-            return configSettings;
         }
 
         private T CreateFixture<T>()

@@ -34,7 +34,7 @@ namespace Transporter.IntegrationTests.Tests.Couchbase_MSSQL
         [Test]
         public async Task Transporter_ShouldTransportData()
         {
-            //Arrange
+            //Arrange & Act
             await using var connection = new SqlConnection(MssqlConnectionString);
             connection.Open();
 
@@ -54,10 +54,8 @@ namespace Transporter.IntegrationTests.Tests.Couchbase_MSSQL
                     "lmd"
                 });
             
-            var configSettings = GetConfigSettings();
-            
             var configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection(configSettings)
+                .AddJsonFile(JobConstants.MsSqlToCouchbase.AppSettingsFileName)
                 .Build();
            
             var build = Program.CreateHostBuilder(Array.Empty<string>())
@@ -80,56 +78,6 @@ namespace Transporter.IntegrationTests.Tests.Couchbase_MSSQL
             var byIdAsync = await GetRequiredService<ICouchbaseProviderHelper>()
                 .GetByIdAsync<UserClass>(GetCouchbaseConnectionData(), JobConstants.MsSqlToCouchbase.TargetBucketName, id.ToString());
             byIdAsync.Age.Should().Be(age);
-        }
-
-        private Dictionary<string, string> GetConfigSettings()
-        {
-            var configSettings = new Dictionary<string, string>
-            {
-                { "PollingJobSettings:0:Name",CreateFixture<string>()},
-                { "PollingJobSettings:0:Cron",JobConstants.MsSqlToCouchbase.PollingJobSettingsCron},
-                { "PollingJobSettings:0:Source:Type",ContainerConstants.MsSql.Type},
-                { "PollingJobSettings:0:Source:Host",ContainerConstants.MsSql.Localhost},
-                { "PollingJobSettings:0:Source:Options:ConnectionString",MssqlConnectionString},
-                { "PollingJobSettings:0:Source:Options:Schema",MssqlSchemaName},
-                { "PollingJobSettings:0:Source:Options:Table",JobConstants.MsSqlToCouchbase.SourceTableName},
-                { "PollingJobSettings:0:Source:Options:IdColumn",JobConstants.MsSqlToCouchbase.IdColumn},
-                { "PollingJobSettings:0:Source:Options:Condition",string.Empty},
-                { "PollingJobSettings:0:Source:Options:BatchQuantity",ContainerConstants.BatchQuantity.ToString()},
-                { "PollingJobSettings:0:Target:Host",ContainerConstants.Couchbase.Localhost},
-                { "PollingJobSettings:0:Target:Type",ContainerConstants.Couchbase.Type},
-                { "PollingJobSettings:0:Target:Options:Bucket",JobConstants.MsSqlToCouchbase.InterimBucketName},
-                { "PollingJobSettings:0:Target:Options:ConnectionData:Hosts",ContainerConstants.Couchbase.Localhost},
-                { "PollingJobSettings:0:Target:Options:ConnectionData:Username",ContainerConstants.Couchbase.UserName},
-                { "PollingJobSettings:0:Target:Options:ConnectionData:Password",ContainerConstants.Couchbase.Password},
-                { "PollingJobSettings:0:Target:Options:ConnectionData:UiPort",ContainerConstants.Couchbase.UiPort.ToString()},
-                { "TransferJobSettings:0:Name", CreateFixture<string>() },
-                { "TransferJobSettings:0:Cron", JobConstants.MsSqlToCouchbase.TransferJobSettingsCron},
-                { "TransferJobSettings:0:Source:Host", ContainerConstants.MsSql.Localhost},
-                { "TransferJobSettings:0:Source:Type", ContainerConstants.MsSql.Type},
-                { "TransferJobSettings:0:Source:Options:ConnectionString", MssqlConnectionString},
-                { "TransferJobSettings:0:Source:Options:Schema", MssqlSchemaName},
-                { "TransferJobSettings:0:Source:Options:Table", JobConstants.MsSqlToCouchbase.SourceTableName},
-                { "TransferJobSettings:0:Source:Options:IdColumn", JobConstants.MsSqlToCouchbase.IdColumn},
-                { "TransferJobSettings:0:Interim:Host", ContainerConstants.Couchbase.Localhost},
-                { "TransferJobSettings:0:Interim:Type", ContainerConstants.Couchbase.Type},
-                { "TransferJobSettings:0:Interim:Options:Bucket", JobConstants.MsSqlToCouchbase.InterimBucketName},
-                { "TransferJobSettings:0:Interim:Options:ConnectionData:Hosts", ContainerConstants.Couchbase.Localhost},
-                { "TransferJobSettings:0:Interim:Options:ConnectionData:Username", ContainerConstants.Couchbase.UserName},
-                { "TransferJobSettings:0:Interim:Options:ConnectionData:Password", ContainerConstants.Couchbase.Password},
-                { "TransferJobSettings:0:Interim:Options:ConnectionData:UiPort", ContainerConstants.Couchbase.UiPort.ToString()},
-                { "TransferJobSettings:0:Interim:Options:BatchQuantity", ContainerConstants.BatchQuantity.ToString()},
-                { "TransferJobSettings:0:Interim:Options:DataSourceName", $"{MssqlSchemaName}.{JobConstants.MsSqlToCouchbase.SourceTableName}"},
-                { "TransferJobSettings:0:Target:Host", ContainerConstants.Couchbase.Localhost},
-                { "TransferJobSettings:0:Target:Type", ContainerConstants.Couchbase.Type},
-                { "TransferJobSettings:0:Target:Options:Bucket", JobConstants.MsSqlToCouchbase.TargetBucketName},
-                { "TransferJobSettings:0:Target:Options:KeyProperty", JobConstants.MsSqlToCouchbase.IdColumn},
-                { "TransferJobSettings:0:Target:Options:ConnectionData:Hosts", ContainerConstants.Couchbase.Localhost},
-                { "TransferJobSettings:0:Target:Options:ConnectionData:Username", ContainerConstants.Couchbase.UserName},
-                { "TransferJobSettings:0:Target:Options:ConnectionData:Password", ContainerConstants.Couchbase.Password},
-                { "TransferJobSettings:0:Target:Options:ConnectionData:UiPort", ContainerConstants.Couchbase.UiPort.ToString()},
-            };
-            return configSettings;
         }
 
         private T CreateFixture<T>()
