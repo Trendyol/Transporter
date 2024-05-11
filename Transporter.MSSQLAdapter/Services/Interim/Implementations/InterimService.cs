@@ -71,7 +71,7 @@ namespace Transporter.MSSQLAdapter.Services.Interim.Implementations
 
         private int GetTimeDifferenceThreshold()
         {
-            return _configuration.GetSection(Constants.TimeDifferenceThreshold).Exists() ? _configuration.GetValue<int>(Constants.TimeDifferenceThreshold)  : 5;
+            return _configuration.GetSection(Constants.TimeDifferenceThreshold).Exists() ? _configuration.GetValue<int>(Constants.TimeDifferenceThreshold) : 5;
         }
         
         private async Task<string> GetDeleteQueryAsync(IMsSqlInterimSettings settings, IEnumerable<dynamic> ids)
