@@ -18,10 +18,11 @@ namespace Transporter.CouchbaseAdapter.Services.Target.Implementations
     public class TargetService : ITargetService
     {
         private readonly IBucketProvider _bucketProvider;
-
-        public TargetService(IBucketProvider bucketProvider)
+        private readonly IDateTimeProvider _dateTimeProvider;
+        public TargetService(IBucketProvider bucketProvider, IDateTimeProvider dateTimeProvider)
         {
             _bucketProvider = bucketProvider;
+            _dateTimeProvider = dateTimeProvider;
         }
 
         public async Task SetTargetDataAsync(ICouchbaseTargetSettings settings, string data)
@@ -63,17 +64,17 @@ namespace Transporter.CouchbaseAdapter.Services.Target.Implementations
             }
         }
 
-        private static Func<IdObject, InterimTable> SelectTemporaryTableDataFromId(string dataSourceName)
+        private  Func<IdObject, InterimTable> SelectTemporaryTableDataFromId(string dataSourceName)
         {
             return dataItemId => CreateTemporaryTableData(dataSourceName, dataItemId);
         }
 
-        private static InterimTable CreateTemporaryTableData(string dataSourceName, IdObject dataItemId)
+        private  InterimTable CreateTemporaryTableData(string dataSourceName, IdObject dataItemId)
         {
             return new InterimTable
             {
                 Id = dataItemId.Id,
-                Lmd = DateTime.Now,
+                Lmd = _dateTimeProvider.Now,
                 DataSourceName = dataSourceName
             };
         }

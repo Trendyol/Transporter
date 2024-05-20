@@ -6,6 +6,7 @@ using Couchbase;
 using Couchbase.Core.Exceptions.KeyValue;
 using Couchbase.KeyValue;
 using Couchbase.Query;
+using Microsoft.Extensions.Configuration;
 using Transporter.CouchbaseAdapter.Configs.Interim.Interfaces;
 using Transporter.CouchbaseAdapter.Data.Interfaces;
 using Transporter.CouchbaseAdapter.Services.Interim.Interfaces;
@@ -17,11 +18,12 @@ namespace Transporter.CouchbaseAdapter.Services.Interim.Implementations
     {
         private readonly ICouchbaseProvider _couchbaseProvider;
         private readonly IBucketProvider _bucketProvider;
-
-        public InterimService(ICouchbaseProvider couchbaseProvider, IBucketProvider bucketProvider)
+        private readonly IConfiguration _configuration;
+        public InterimService(ICouchbaseProvider couchbaseProvider, IBucketProvider bucketProvider, IConfiguration configuration)
         {
             _couchbaseProvider = couchbaseProvider;
             _bucketProvider = bucketProvider;
+            _configuration = configuration;
         }
 
         public async Task<IEnumerable<dynamic>> GetInterimDataAsync(ICouchbaseInterimSettings settings)
@@ -78,16 +80,23 @@ namespace Transporter.CouchbaseAdapter.Services.Interim.Implementations
             return await Task.FromResult(query.ToString());
         }
 
-        private static StringBuilder BuildUpdateQuery(ICouchbaseInterimSettings settings,
+        private StringBuilder BuildUpdateQuery(ICouchbaseInterimSettings settings,
             ICouchbaseInterimOptions options)
         {
+            var timeDifferenceThreshold = GetTimeDifferenceThreshold();
+            
             var query = new StringBuilder();
             query.AppendLine($"UPDATE `{options.Bucket}` SET lmd=CLOCK_LOCAL()");
             query.AppendLine($"WHERE dataSourceName='{options.DataSourceName}'");
-            query.AppendLine("AND DATE_DIFF_STR(CLOCK_LOCAL(),lmd, 'minute') > 5");
+            query.AppendLine($"AND DATE_DIFF_STR(CLOCK_LOCAL(),lmd, 'minute') > {timeDifferenceThreshold}");
             query.AppendLine($"limit {settings.Options.BatchQuantity} RETURNING RAW id");
 
             return query;
+        }
+
+        private int GetTimeDifferenceThreshold()
+        {
+            return _configuration.GetSection(Constants.TimeDifferenceThreshold).Exists() ? _configuration.GetValue<int>(Constants.TimeDifferenceThreshold) : 5;
         }
 
         private async Task<ICouchbaseCollection> GetCollectionAsync(ConnectionData connectionData, string bucket)

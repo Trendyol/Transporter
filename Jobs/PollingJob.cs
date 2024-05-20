@@ -41,7 +41,9 @@ namespace TransporterService.Jobs
                 sourceData = await source.GetIdsAsync();
 
                 if (target is not null)
+                {
                     await target.SetInterimTableAsync(sourceData.ToJson(), source.GetDataSourceName());
+                }
 
                 await Console.Error.WriteLineAsync(
                     $"{context.FireInstanceId} : {PollingJobSettings.Name} => {DateTimeOffset.Now} => {PollingJobSettings.Source} => {context.JobDetail.Key}");

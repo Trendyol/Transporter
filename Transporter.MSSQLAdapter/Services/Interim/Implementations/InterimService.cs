@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
+using Microsoft.Extensions.Configuration;
 using Transporter.Core.Utils;
 using Transporter.MSSQLAdapter.Configs.Interim.Interfaces;
 using Transporter.MSSQLAdapter.Data.Interfaces;
@@ -13,10 +14,12 @@ namespace Transporter.MSSQLAdapter.Services.Interim.Implementations
     public class InterimService : IInterimService
     {
         private readonly IDbConnectionFactory _dbConnectionFactory;
-
-        public InterimService(IDbConnectionFactory dbConnectionFactory)
+        private readonly IConfiguration _configuration;
+        
+        public InterimService(IDbConnectionFactory dbConnectionFactory, IConfiguration configuration)
         {
             _dbConnectionFactory = dbConnectionFactory;
+            _configuration = configuration;
         }
 
         public async Task<IEnumerable<dynamic>> GetInterimDataAsync(IMsSqlInterimSettings settings)
@@ -55,16 +58,22 @@ namespace Transporter.MSSQLAdapter.Services.Interim.Implementations
 
         private async Task<string> GetInterimQueryAsync(IMsSqlInterimSettings settings)
         {
+            var timeDifferenceThreshold = GetTimeDifferenceThreshold();
             var sqlOptions = settings.Options;
             var query = new StringBuilder();
             query.AppendLine($"UPDATE TOP ({sqlOptions.BatchQuantity}) {sqlOptions.Schema}.{sqlOptions.Table}");
             query.AppendLine("SET Lmd=GETDATE() OUTPUT inserted.Id");
             query.AppendLine($"WHERE DataSourceName='{sqlOptions.DataSourceName}'");
-            query.AppendLine($"AND DATEDIFF(minute, lmd, GETDATE()) > 5");
+            query.AppendLine($"AND DATEDIFF(minute, lmd, GETDATE()) > {timeDifferenceThreshold}");
 
             return await Task.FromResult(query.ToString());
         }
 
+        private int GetTimeDifferenceThreshold()
+        {
+            return _configuration.GetSection(Constants.TimeDifferenceThreshold).Exists() ? _configuration.GetValue<int>(Constants.TimeDifferenceThreshold) : 5;
+        }
+        
         private async Task<string> GetDeleteQueryAsync(IMsSqlInterimSettings settings, IEnumerable<dynamic> ids)
         {
             var sqlOptions = settings.Options;

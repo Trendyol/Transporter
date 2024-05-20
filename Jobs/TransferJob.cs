@@ -42,7 +42,6 @@ namespace TransporterService.Jobs
 
                 var interimData = await interim.GetAsync();
                 var interimList = interimData.ToList();
-
                 if (!interimList.Any())
                 {
                     return;

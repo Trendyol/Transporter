@@ -44,7 +44,7 @@ namespace TransporterService
 
                     services.Configure<QuartzOptions>(hostContext.Configuration.GetSection("Quartz"));
                     services.AddSingleton<IAdapterFactory, AdapterFactory>();
-                    
+                    services.AddTransient<IDateTimeProvider, LocalDateTimeProvider>();
                     services.AddHostedService<HealthCheckDaemon>();
 
                     services.AddQuartz(quartz =>

@@ -17,16 +17,23 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Tests\Couchbase-Couchbase" />
-      <Folder Include="Tests\MSSQL-MSSQL" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\Transporter.Service.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <None Update="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="appsettings_couchbaseToCouchbase.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="appsettings_couchbaseToMsSql.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="appsettings_MsSqlToCouchbase.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="appsettings_MsSqlToMsSql.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>
