@@ -51,13 +51,13 @@ In database processes, data safety is our first concern. Since we delete data on
     
 -   Interoperability: The project can transfer data mutually between different database types
 
- |              | Couchbase   |  MSSQL     |
-| :---         |    :----:   |     :----: |
-| **Couchbase**| **✓**       | **✓**      |
-| **MSSQL**    | **✓**       |  **✓**     |
+|                | Couchbase | MSSQL | PostgreSQL |
+|:---------------|:---------:|:-----:|:----------:|
+| **Couchbase**  |   **✓**   | **✓** |   **✓**    |
+| **MSSQL**      |   **✓**   | **✓** |   **✓**    |
+| **PostgreSQL** |   **✓**   | **✓** |   **✓**    |
 
 -   Schedulability: Can work at the given interval.
-
 
 
 ### Configs
@@ -65,16 +65,17 @@ In database processes, data safety is our first concern. Since we delete data on
 Explanation of some main properties of config properties. Please note that the config properties are case sensitive. Example can be found in “examples/configs” folder. 
 
 - Name: Must be unique. 
-- Type: Specifies database type. You can give "Couchbase" or "mssql" for now. 
+- Type: Specifies database type. You can give "Couchbase", "mssql" or "postgresql" for now. 
 - Cron: Specifies the interval that transporter will work on. For example: "0/20 * * ? * *"
 - Condition: Condition that specifies which data is to be transferred
-- KeyProperty: When transferring data from Mssql to Couchbase you can select the key of Couchbase that corresponds to any MSSQL column, not just Id property. If you are transferring data from Couchbase to Couchbase you must use "id" like in the examples.
+- KeyProperty: When transferring data from MSSQL/PostgreSQL to Couchbase you can select the key of Couchbase that corresponds to any MSSQL/PostgreSQL column, not just Id property. If you are transferring data from Couchbase to Couchbase you must use "id" like in the examples.
   
   
 ### Noteworthy Mentions 
 
 For Couchbase: When generating a key we use id and name of data source. Example: {id}_{dataSourceName}
-For mssql: Unique Index must be created for id and data source name on interim table. 
+For mssql: Unique Index must be created for id and data source name on interim table.
+For postgresql: Unique Index must be created for id and data source name on interim table.
 
 
 <!--  GETTING  STARTED  -->

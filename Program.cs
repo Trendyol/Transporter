@@ -16,6 +16,7 @@ using Transporter.Core.Factories.Adapter.Interfaces;
 using Transporter.Core.Utils;
 using Transporter.CouchbaseAdapter;
 using Transporter.MSSQLAdapter;
+using Transporter.PostgreSqlAdapter;
 using TransporterService.Daemon;
 using TransporterService.Jobs;
 
@@ -41,6 +42,7 @@ namespace TransporterService
 
                     services.TransporterMsSqlAdapterRegister();
                     services.TransporterCouchbaseAdapterRegister();
+                    services.TransporterPostgreSqlAdapterRegister();
 
                     services.Configure<QuartzOptions>(hostContext.Configuration.GetSection("Quartz"));
                     services.AddSingleton<IAdapterFactory, AdapterFactory>();
