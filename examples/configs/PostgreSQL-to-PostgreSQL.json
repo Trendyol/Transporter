@@ -1,0 +1,66 @@
+{
+  "TransferJobSettings": [
+    {
+      "Name": "Example Transfer Job Name",
+      "Cron": "0/20 * * ? * *",
+      "Source": {
+        "Type": "postgresql",
+        "Host": "example-source-host",
+        "Options": {
+          "ConnectionString": "",
+          "Schema": "example",
+          "Table": "example_source_table",
+          "IdColumn": "id"
+        }
+      },
+      "Interim": {
+        "Type": "postgresql",
+        "Host": "example-target-host",
+        "Options": {
+          "ConnectionString": "",
+          "Schema": "example",
+          "Table": "example_interim_table",
+          "BatchQuantity": 1000,
+          "DataSourceName": "example.example_source_table"
+        }
+      },
+      "Target": {
+        "Type": "postgresql",
+        "Host": "example-target-host",
+        "Options": {
+          "ConnectionString": "",
+          "Schema": "example_target",
+          "Table": "example_target_table",
+          "IdColumn": "id"
+        }
+      }
+    }
+  ],
+  "PollingJobSettings": [
+    {
+      "Name": "Example Polling Job Name",
+      "Cron": "0/20 * * ? * *",
+      "Source": {
+        "Type": "postgresql",
+        "Host": "example-source-host",
+        "Options": {
+          "ConnectionString": "",
+          "Schema": "example",
+          "Table": "example_source_table",
+          "BatchQuantity": 1000,
+          "IdColumn": "id",
+          "Condition": "created_date < NOW() - INTERVAL '30 days'"
+        }
+      },
+      "Target": {
+        "Type": "postgresql",
+        "Host": "example-target-host",
+        "Options": {
+          "ConnectionString": "",
+          "Schema": "example_target",
+          "Table": "example_target_table"
+        }
+      }
+    }
+  ]
+}

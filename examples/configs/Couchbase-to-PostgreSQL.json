@@ -1,0 +1,73 @@
+{
+  "TransferJobSettings": [
+    {
+      "Name": "Example Transfer Job Name", 
+      "Cron": "0/30 * * ? * *",
+      "Source": {
+        "Host": "test-host-couchbase",
+        "Type": "Couchbase",
+        "Options": {
+          "Bucket": "example-source-bucket",
+          "ConnectionData": {
+            "Hosts": "test-host-couchbase",
+            "Username": "username",
+            "Password": "password",
+            "UiPort": 8091
+          },
+          "BatchQuantity": 1000
+        }
+      },
+      "Interim": {
+        "Type": "postgresql",
+        "Host": "test-host-postgresql",
+        "Options": {
+          "ConnectionString": "",
+          "Schema": "example",
+          "Table": "example_interim_table",
+          "BatchQuantity": 1000,
+          "DataSourceName": "example-source-bucket"
+        }
+      },
+      "Target": {
+        "Type": "postgresql",
+        "Host": "test-host-postgresql",
+        "Options": {
+          "ConnectionString": "",
+          "Schema": "example",
+          "Table": "example_target_table",
+          "IdColumn": "id"
+        }
+      }
+    }
+  ],
+  "PollingJobSettings": [
+    {
+      "Name": "Example Polling Job Name",
+      "Cron": "0/30 * * ? * *",
+      "Source": {
+        "Host": "test-host-couchbase",
+        "Type": "Couchbase",
+        "Options": {
+          "Bucket": "example-source-bucket",
+          "ConnectionData": {
+            "Hosts": "test-host-couchbase",
+            "Username": "username",
+            "Password": "password",
+            "UiPort": 8091
+          },
+          "BatchQuantity": 1000,
+          "Condition": "type = 'UserTest'"
+        }
+      },
+      "Target": {
+        "Type": "postgresql",
+        "Host": "test-host-postgresql",
+        "Options": {
+          "ConnectionString": "",
+          "Schema": "example",
+          "Table": "example_interim_table"
+        }
+      }
+    }
+  ]
+}
