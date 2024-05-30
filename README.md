@@ -69,7 +69,7 @@ Explanation of some main properties of config properties. Please note that the c
 - Cron: Specifies the interval that transporter will work on. For example: "0/20 * * ? * *"
 - Condition: Condition that specifies which data is to be transferred
 - KeyProperty: When transferring data from Mssql to Couchbase you can select the key of Couchbase that corresponds to any MSSQL column, not just Id property. If you are transferring data from Couchbase to Couchbase you must use "id" like in the examples.
-  
+- TimeDifferenceThreshold : This configuration parameter specifies the threshold time used when retrieving data from the interim table. By default, it is set to 5 minutes.  
   
 ### Noteworthy Mentions 
 
