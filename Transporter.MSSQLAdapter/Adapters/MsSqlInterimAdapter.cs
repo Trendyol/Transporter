@@ -14,17 +14,11 @@ using Transporter.MSSQLAdapter.Utils;
 
 namespace Transporter.MSSQLAdapter.Adapters
 {
-    public class MsSqlInterimAdapter : IInterimAdapter
+    public class MsSqlInterimAdapter(IConfiguration configuration, IInterimService interimService) : IInterimAdapter
     {
-        private readonly IConfiguration _configuration;
-        private readonly IInterimService _interimService;
+        private readonly IConfiguration _configuration = configuration;
+        private readonly IInterimService _interimService = interimService;
         private IMsSqlInterimSettings _settings;
-
-        public MsSqlInterimAdapter(IConfiguration configuration, IInterimService interimService)
-        {
-            _configuration = configuration;
-            _interimService = interimService;
-        }
 
         public object Clone()
         {
@@ -45,25 +39,13 @@ namespace Transporter.MSSQLAdapter.Adapters
             return string.Equals(type, MsSqlAdapterConstants.OptionsType, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public void SetOptions(ITransferJobSettings transferJobSettings)
-        {
-            _settings = GetOptions(transferJobSettings);
-        }
+        public void SetOptions(ITransferJobSettings transferJobSettings) => _settings = GetOptions(transferJobSettings);
 
-        public void SetOptions(IPollingJobSettings jobSettings)
-        {
-            _settings = GetOptions(jobSettings);
-        }
+        public void SetOptions(IPollingJobSettings jobSettings) => _settings = GetOptions(jobSettings);
 
-        public async Task<IEnumerable<dynamic>> GetAsync()
-        {
-            return await _interimService.GetInterimDataAsync(_settings);
-        }
+        public async Task<IEnumerable<dynamic>> GetAsync() => await _interimService.GetInterimDataAsync(_settings);
 
-        public async Task DeleteAsync(IEnumerable<dynamic> ids)
-        {
-            await _interimService.DeleteAsync(_settings, ids);
-        }
+        public async Task DeleteAsync(IEnumerable<dynamic> ids) => await _interimService.DeleteAsync(_settings, ids);
 
         private IMsSqlInterimSettings GetOptions(ITransferJobSettings transferJobSettings)
         {

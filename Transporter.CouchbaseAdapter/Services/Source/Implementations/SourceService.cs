@@ -10,14 +10,9 @@ using Transporter.CouchbaseAdapter.Utils;
 
 namespace Transporter.CouchbaseAdapter.Services.Source.Implementations
 {
-    public class SourceService : ISourceService
+    public class SourceService(ICouchbaseProvider couchbaseProvider) : ISourceService
     {
-        private readonly ICouchbaseProvider _couchbaseProvider;
-
-        public SourceService(ICouchbaseProvider couchbaseProvider)
-        {
-            _couchbaseProvider = couchbaseProvider;
-        }
+        private readonly ICouchbaseProvider _couchbaseProvider = couchbaseProvider;
 
         public async Task<IEnumerable<dynamic>> GetSourceDataAsync(ICouchbaseSourceSettings settings,
             IEnumerable<dynamic> ids)

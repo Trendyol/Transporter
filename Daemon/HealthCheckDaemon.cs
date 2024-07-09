@@ -12,16 +12,11 @@ using Microsoft.Extensions.Logging;
 namespace TransporterService.Daemon
 {
     [ExcludeFromCodeCoverage]
-    public class HealthCheckDaemon : BackgroundService
+    public class HealthCheckDaemon(ILogger<HealthCheckDaemon> logger) : BackgroundService
     {
         private const int ListeningPort = 80;
         private static readonly byte[] Message = Encoding.ASCII.GetBytes("Pong");
-        private readonly ILogger<HealthCheckDaemon> _logger;
-
-        public HealthCheckDaemon(ILogger<HealthCheckDaemon> logger)
-        {
-            _logger = logger;
-        }
+        private readonly ILogger<HealthCheckDaemon> _logger = logger;
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {

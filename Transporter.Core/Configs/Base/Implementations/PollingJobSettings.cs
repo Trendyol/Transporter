@@ -19,10 +19,6 @@ namespace Transporter.Core.Configs.Base.Implementations
         public ISourceOptions Source { get; set; }
         public ITargetOptions Target { get; set; }
 
-        public override string ToString()
-        {
-            return
-                $"Name : {Name}\tCron : {Cron}\tSource : {Source}\tTarget : {Target}";
-        }
+        public override string ToString() => $"Name : {Name}\tCron : {Cron}\tSource : {Source}\tTarget : {Target}";
     }
 }

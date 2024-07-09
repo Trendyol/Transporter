@@ -11,10 +11,7 @@ namespace Transporter.MSSQLAdapter.Configs.Source.Implementations
         public string IdColumn { get; set; }
         public string Condition { get; set; }
 
-        public override string ToString()
-        {
-            return
-                $"Schema : {Schema} Table : {Table} ConnectionString : {ConnectionString} IdColumn : {IdColumn} BatchCount : {BatchQuantity} Condition : {Condition}";
-        }
+        public override string ToString() => 
+            $"Schema : {Schema} Table : {Table} ConnectionString : {ConnectionString} IdColumn : {IdColumn} BatchCount : {BatchQuantity} Condition : {Condition}";
     }
 }

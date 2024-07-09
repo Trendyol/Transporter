@@ -10,19 +10,13 @@ using Transporter.Core.Factories.Adapter.Interfaces;
 
 namespace Transporter.Core.Factories.Adapter.Implementations
 {
-    public class AdapterFactory : IAdapterFactory
+    public class AdapterFactory(IEnumerable<ISourceAdapter> sourceAdapters,
+        IEnumerable<ITargetAdapter> targetAdapters, 
+        IEnumerable<IInterimAdapter> interimAdapters) : IAdapterFactory
     {
-        private readonly IEnumerable<ISourceAdapter> _sourceAdapters;
-        private readonly IEnumerable<ITargetAdapter> _targetAdapters;
-        private readonly IEnumerable<IInterimAdapter> _interimAdapters;
-
-        public AdapterFactory(IEnumerable<ISourceAdapter> sourceAdapters,
-            IEnumerable<ITargetAdapter> targetAdapters, IEnumerable<IInterimAdapter> interimAdapters)
-        {
-            _sourceAdapters = sourceAdapters;
-            _targetAdapters = targetAdapters;
-            _interimAdapters = interimAdapters;
-        }
+        private readonly IEnumerable<ISourceAdapter> _sourceAdapters = sourceAdapters;
+        private readonly IEnumerable<ITargetAdapter> _targetAdapters = targetAdapters;
+        private readonly IEnumerable<IInterimAdapter> _interimAdapters = interimAdapters;
 
         public async Task<T> GetAsync<T>(TransferJobSettings options) where T : IAdapter
         {

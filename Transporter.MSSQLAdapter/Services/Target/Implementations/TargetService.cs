@@ -14,16 +14,10 @@ using Transporter.MSSQLAdapter.Services.Target.Interfaces;
 
 namespace Transporter.MSSQLAdapter.Services.Target.Implementations
 {
-    public class TargetService : ITargetService
+    public class TargetService(IDbConnectionFactory dbConnectionFactory, IDateTimeProvider dateTimeProvider) : ITargetService
     {
-        private readonly IDbConnectionFactory _dbConnectionFactory;
-        private readonly IDateTimeProvider _dateTimeProvider;
-        
-        public TargetService(IDbConnectionFactory dbConnectionFactory, IDateTimeProvider dateTimeProvider)
-        {
-            _dbConnectionFactory = dbConnectionFactory;
-            _dateTimeProvider = dateTimeProvider;
-        }
+        private readonly IDbConnectionFactory _dbConnectionFactory = dbConnectionFactory;
+        private readonly IDateTimeProvider _dateTimeProvider = dateTimeProvider;
 
         public async Task SetTargetDataAsync(IMsSqlTargetSettings setting, string data)
         {
@@ -77,20 +71,13 @@ namespace Transporter.MSSQLAdapter.Services.Target.Implementations
             }
         }
 
-        private static Func<Dictionary<string, string>, Dictionary<string, string>> ConvertKeysToId(string id)
-        {
-            return dictionary => dictionary.ToDictionary(x => id, x => x.Value);
-        }
+        private static Func<Dictionary<string, string>, Dictionary<string, string>> ConvertKeysToId(string id) =>
+            dictionary => dictionary.ToDictionary(x => id, x => x.Value);
 
-        private static Func<Dictionary<string, string>, Dictionary<string, string>> ConvertDictionaryKeysToUpperCase()
-        {
-            return dictionary => dictionary.ToDictionary(CapitalizeKey, x => x.Value);
-        }
+        private static Func<Dictionary<string, string>, Dictionary<string, string>> ConvertDictionaryKeysToUpperCase() =>
+            dictionary => dictionary.ToDictionary(CapitalizeKey, x => x.Value);
 
-        private static string CapitalizeKey(KeyValuePair<string, string> x)
-        {
-            return char.ToUpper(x.Key[0]) + x.Key[1..];
-        }
+        private static string CapitalizeKey(KeyValuePair<string, string> x) => char.ToUpper(x.Key[0]) + x.Key[1..];
 
         private async Task<List<DynamicParameters>> GetParameters(List<Dictionary<string, string>> insertData)
         {
@@ -122,11 +109,9 @@ namespace Transporter.MSSQLAdapter.Services.Target.Implementations
             return await Task.FromResult(query.ToString());
         }
 
-        private static IEnumerable<string> GetExcludedColumnsFromSettings(IMsSqlTargetSettings settings)
-        {
-            return settings.Options.ExcludedColumns?.Split(",").Select(x => x.ToUpper()) ??
+        private static IEnumerable<string> GetExcludedColumnsFromSettings(IMsSqlTargetSettings settings) =>
+            settings.Options.ExcludedColumns?.Split(",").Select(x => x.ToUpper()) ??
                    Array.Empty<string>();
-        }
 
         private async Task<string> GetTargetInsertIdDataQueryAsync(IMsSqlTargetSettings setting,
             Dictionary<string, string> insertData)

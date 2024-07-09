@@ -8,15 +8,10 @@ using Transporter.CouchbaseAdapter.Utils;
 
 namespace Transporter.CouchbaseAdapter.Data.Implementations
 {
-    public class BucketProvider : IBucketProvider
+    public class BucketProvider(ICouchbaseProvider couchbaseProvider) : IBucketProvider
     {
-        private readonly ICouchbaseProvider _couchbaseProvider;
+        private readonly ICouchbaseProvider _couchbaseProvider = couchbaseProvider;
         private readonly Dictionary<string, IBucket> _buckets = new();
-
-        public BucketProvider(ICouchbaseProvider couchbaseProvider)
-        {
-            _couchbaseProvider = couchbaseProvider;
-        }
 
         public async Task<IBucket> GetBucket(ConnectionData connectionData, string bucketName)
         {

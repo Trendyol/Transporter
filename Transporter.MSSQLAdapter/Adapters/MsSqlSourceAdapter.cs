@@ -14,17 +14,11 @@ using Transporter.MSSQLAdapter.Utils;
 
 namespace Transporter.MSSQLAdapter.Adapters
 {
-    public class MsSqlSourceAdapter : ISourceAdapter
+    public class MsSqlSourceAdapter(ISourceService sourceService, IConfiguration configuration) : ISourceAdapter
     {
-        private readonly IConfiguration _configuration;
-        private readonly ISourceService _sourceService;
+        private readonly IConfiguration _configuration = configuration;
+        private readonly ISourceService _sourceService = sourceService;
         private IMsSqlSourceSettings _settings;
-
-        public MsSqlSourceAdapter(ISourceService sourceService, IConfiguration configuration)
-        {
-            _sourceService = sourceService;
-            _configuration = configuration;
-        }
 
         public bool CanHandle(ITransferJobSettings transferJobSettings)
         {
@@ -39,35 +33,19 @@ namespace Transporter.MSSQLAdapter.Adapters
             return string.Equals(type, MsSqlAdapterConstants.OptionsType, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public void SetOptions(ITransferJobSettings transferJobSettings)
-        {
-            _settings = GetOptions(transferJobSettings);
-        }
+        public void SetOptions(ITransferJobSettings transferJobSettings) => _settings = GetOptions(transferJobSettings);
 
-        public void SetOptions(IPollingJobSettings jobSettings)
-        {
-            _settings = GetOptions(jobSettings);
-        }
+        public void SetOptions(IPollingJobSettings jobSettings) => _settings = GetOptions(jobSettings);
 
-        public async Task<IEnumerable<dynamic>> GetAsync(IEnumerable<dynamic> ids)
-        {
-            return await _sourceService.GetSourceDataAsync(_settings, ids);
-        }
+        public async Task<IEnumerable<dynamic>> GetAsync(IEnumerable<dynamic> ids) => 
+            await _sourceService.GetSourceDataAsync(_settings, ids);
 
-        public async Task DeleteAsync(IEnumerable<dynamic> ids)
-        {
+        public async Task DeleteAsync(IEnumerable<dynamic> ids) => 
             await _sourceService.DeleteDataByListOfIdsAsync(_settings, ids);
-        }
 
-        public string GetDataSourceName()
-        {
-            return $"{_settings.Options.Schema}.{_settings.Options.Table}";
-        }
+        public string GetDataSourceName() => $"{_settings.Options.Schema}.{_settings.Options.Table}";
 
-        public async Task<IEnumerable<dynamic>> GetIdsAsync()
-        {
-            return await _sourceService.GetIdDataAsync(_settings);
-        }
+        public async Task<IEnumerable<dynamic>> GetIdsAsync() => await _sourceService.GetIdDataAsync(_settings);
 
         public virtual object Clone()
         {

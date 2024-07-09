@@ -10,14 +10,9 @@ using Transporter.MSSQLAdapter.Services.Source.Interfaces;
 
 namespace Transporter.MSSQLAdapter.Services.Source.Implementations
 {
-    public class SourceService : ISourceService
+    public class SourceService(IDbConnectionFactory dbConnectionFactory) : ISourceService
     {
-        private readonly IDbConnectionFactory _dbConnectionFactory;
-
-        public SourceService(IDbConnectionFactory dbConnectionFactory)
-        {
-            _dbConnectionFactory = dbConnectionFactory;
-        }
+        private readonly IDbConnectionFactory _dbConnectionFactory = dbConnectionFactory;
 
         public async Task<IEnumerable<dynamic>> GetSourceDataAsync(IMsSqlSourceSettings settings, IEnumerable<dynamic> ids)
         {

@@ -11,16 +11,10 @@ using Transporter.MSSQLAdapter.Services.Interim.Interfaces;
 
 namespace Transporter.MSSQLAdapter.Services.Interim.Implementations
 {
-    public class InterimService : IInterimService
+    public class InterimService(IDbConnectionFactory dbConnectionFactory, IConfiguration configuration) : IInterimService
     {
-        private readonly IDbConnectionFactory _dbConnectionFactory;
-        private readonly IConfiguration _configuration;
-        
-        public InterimService(IDbConnectionFactory dbConnectionFactory, IConfiguration configuration)
-        {
-            _dbConnectionFactory = dbConnectionFactory;
-            _configuration = configuration;
-        }
+        private readonly IDbConnectionFactory _dbConnectionFactory = dbConnectionFactory;
+        private readonly IConfiguration _configuration = configuration;
 
         public async Task<IEnumerable<dynamic>> GetInterimDataAsync(IMsSqlInterimSettings settings)
         {
@@ -69,11 +63,9 @@ namespace Transporter.MSSQLAdapter.Services.Interim.Implementations
             return await Task.FromResult(query.ToString());
         }
 
-        private int GetTimeDifferenceThreshold()
-        {
-            return _configuration.GetSection(Constants.TimeDifferenceThreshold).Exists() ? _configuration.GetValue<int>(Constants.TimeDifferenceThreshold) : 5;
-        }
-        
+        private int GetTimeDifferenceThreshold() =>
+            _configuration.GetSection(Constants.TimeDifferenceThreshold).Exists() ? _configuration.GetValue<int>(Constants.TimeDifferenceThreshold) : 5;
+
         private async Task<string> GetDeleteQueryAsync(IMsSqlInterimSettings settings, IEnumerable<dynamic> ids)
         {
             var sqlOptions = settings.Options;

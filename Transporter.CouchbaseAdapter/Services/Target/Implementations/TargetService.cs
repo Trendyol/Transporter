@@ -15,15 +15,10 @@ using Transporter.CouchbaseAdapter.Utils;
 
 namespace Transporter.CouchbaseAdapter.Services.Target.Implementations
 {
-    public class TargetService : ITargetService
+    public class TargetService(IBucketProvider bucketProvider, IDateTimeProvider dateTimeProvider) : ITargetService
     {
-        private readonly IBucketProvider _bucketProvider;
-        private readonly IDateTimeProvider _dateTimeProvider;
-        public TargetService(IBucketProvider bucketProvider, IDateTimeProvider dateTimeProvider)
-        {
-            _bucketProvider = bucketProvider;
-            _dateTimeProvider = dateTimeProvider;
-        }
+        private readonly IBucketProvider _bucketProvider = bucketProvider;
+        private readonly IDateTimeProvider _dateTimeProvider = dateTimeProvider;
 
         public async Task SetTargetDataAsync(ICouchbaseTargetSettings settings, string data)
         {
@@ -64,20 +59,16 @@ namespace Transporter.CouchbaseAdapter.Services.Target.Implementations
             }
         }
 
-        private  Func<IdObject, InterimTable> SelectTemporaryTableDataFromId(string dataSourceName)
-        {
-            return dataItemId => CreateTemporaryTableData(dataSourceName, dataItemId);
-        }
+        private Func<IdObject, InterimTable> SelectTemporaryTableDataFromId(string dataSourceName) =>
+            dataItemId => CreateTemporaryTableData(dataSourceName, dataItemId);
 
-        private  InterimTable CreateTemporaryTableData(string dataSourceName, IdObject dataItemId)
-        {
-            return new InterimTable
+        private InterimTable CreateTemporaryTableData(string dataSourceName, IdObject dataItemId) =>
+            new InterimTable
             {
                 Id = dataItemId.Id,
                 Lmd = _dateTimeProvider.Now,
                 DataSourceName = dataSourceName
             };
-        }
 
         private async Task<List<Task<IMutationResult>>> InsertItems(ICouchbaseTargetSettings settings,
             List<InterimTable> insertDataItems, string dataSourceName)
@@ -123,19 +114,13 @@ namespace Transporter.CouchbaseAdapter.Services.Target.Implementations
             return tasks;
         }
 
-        private static IEnumerable<string> GetExcludedPropertiesFromSettings(ICouchbaseTargetSettings settings)
-        {
-            return settings.Options.ExcludedProperties?.Split(",") ?? Array.Empty<string>();
-        }
+        private static IEnumerable<string> GetExcludedPropertiesFromSettings(ICouchbaseTargetSettings settings) => 
+            settings.Options.ExcludedProperties?.Split(",") ?? Array.Empty<string>();
 
-        private async Task<ICouchbaseCollection> GetCollectionAsync(ConnectionData connectionData, string bucket)
-        {
-            return await (await GetBucketAsync(connectionData, bucket)).DefaultCollectionAsync();
-        }
+        private async Task<ICouchbaseCollection> GetCollectionAsync(ConnectionData connectionData, string bucket) => 
+            await (await GetBucketAsync(connectionData, bucket)).DefaultCollectionAsync();
 
-        private Task<IBucket> GetBucketAsync(ConnectionData connectionData, string bucket)
-        {
-            return _bucketProvider.GetBucket(connectionData, bucket);
-        }
+        private Task<IBucket> GetBucketAsync(ConnectionData connectionData, string bucket) =>
+            _bucketProvider.GetBucket(connectionData, bucket);
     }
 }
