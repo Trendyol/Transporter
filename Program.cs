@@ -23,14 +23,10 @@ namespace TransporterService
 {
     public class Program
     {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+        public static void Main(string[] args) => CreateHostBuilder(args).Build().Run();
 
-        public static IHostBuilder CreateHostBuilder(string[] args)
-        {
-            return Host.CreateDefaultBuilder(args)
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((_, configurationBuilder) =>
                 {
                     configurationBuilder.AddJsonFile("configs/secrets.json", optional: true, true);
@@ -71,7 +67,6 @@ namespace TransporterService
                         options.WaitForJobsToComplete = true;
                     });
                 });
-        }
 
         private static void InitializePollingJobs(HostBuilderContext hostContext,
             IServiceCollectionQuartzConfigurator quartz)

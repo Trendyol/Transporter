@@ -13,17 +13,11 @@ using Transporter.CouchbaseAdapter.Services.Source.Interfaces;
 
 namespace Transporter.CouchbaseAdapter.Adapters
 {
-    public class CouchbaseSourceAdapter : ISourceAdapter
+    public class CouchbaseSourceAdapter(ISourceService sourceService, IConfiguration configuration) : ISourceAdapter
     {
-        private readonly ISourceService _sourceService;
-        private readonly IConfiguration _configuration;
+        private readonly ISourceService _sourceService = sourceService;
+        private readonly IConfiguration _configuration = configuration;
         private ICouchbaseSourceSettings _settings;
-
-        public CouchbaseSourceAdapter(ISourceService sourceService, IConfiguration configuration)
-        {
-            _sourceService = sourceService;
-            _configuration = configuration;
-        }
 
         public object Clone()
         {
@@ -44,35 +38,18 @@ namespace Transporter.CouchbaseAdapter.Adapters
             return string.Equals(type, Utils.Constants.OptionsType, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public void SetOptions(ITransferJobSettings transferJobSettings)
-        {
-            _settings = GetOptions(transferJobSettings);
-        }
+        public void SetOptions(ITransferJobSettings transferJobSettings) => _settings = GetOptions(transferJobSettings);
 
-        public void SetOptions(IPollingJobSettings jobSettings)
-        {
-            _settings = GetOptions(jobSettings);
-        }
+        public void SetOptions(IPollingJobSettings jobSettings) => _settings = GetOptions(jobSettings);
 
-        public async Task<IEnumerable<dynamic>> GetAsync(IEnumerable<dynamic> ids)
-        {
-            return await _sourceService.GetSourceDataAsync(_settings, ids);
-        }
+        public async Task<IEnumerable<dynamic>> GetAsync(IEnumerable<dynamic> ids) =>
+            await _sourceService.GetSourceDataAsync(_settings, ids);
 
-        public async Task DeleteAsync(IEnumerable<dynamic> ids)
-        {
-            await _sourceService.DeleteDataByListOfIdsAsync(_settings, ids);
-        }
+        public async Task DeleteAsync(IEnumerable<dynamic> ids) => await _sourceService.DeleteDataByListOfIdsAsync(_settings, ids);
 
-        public async Task<IEnumerable<dynamic>> GetIdsAsync()
-        {
-            return await _sourceService.GetIdDataAsync(_settings);
-        }
+        public async Task<IEnumerable<dynamic>> GetIdsAsync() => await _sourceService.GetIdDataAsync(_settings);
 
-        public string GetDataSourceName()
-        {
-            return $"{_settings.Options.Bucket}";
-        }
+        public string GetDataSourceName() => $"{_settings.Options.Bucket}";
 
         private ICouchbaseSourceSettings GetOptions(ITransferJobSettings transferJobSettings)
         {

@@ -14,17 +14,13 @@ using Transporter.CouchbaseAdapter.Utils;
 
 namespace Transporter.CouchbaseAdapter.Services.Interim.Implementations
 {
-    public class InterimService : IInterimService
+    public class InterimService(ICouchbaseProvider couchbaseProvider, 
+        IBucketProvider bucketProvider,
+        IConfiguration configuration) : IInterimService
     {
-        private readonly ICouchbaseProvider _couchbaseProvider;
-        private readonly IBucketProvider _bucketProvider;
-        private readonly IConfiguration _configuration;
-        public InterimService(ICouchbaseProvider couchbaseProvider, IBucketProvider bucketProvider, IConfiguration configuration)
-        {
-            _couchbaseProvider = couchbaseProvider;
-            _bucketProvider = bucketProvider;
-            _configuration = configuration;
-        }
+        private readonly ICouchbaseProvider _couchbaseProvider = couchbaseProvider;
+        private readonly IBucketProvider _bucketProvider = bucketProvider;
+        private readonly IConfiguration _configuration = configuration;
 
         public async Task<IEnumerable<dynamic>> GetInterimDataAsync(ICouchbaseInterimSettings settings)
         {
@@ -94,19 +90,13 @@ namespace Transporter.CouchbaseAdapter.Services.Interim.Implementations
             return query;
         }
 
-        private int GetTimeDifferenceThreshold()
-        {
-            return _configuration.GetSection(Constants.TimeDifferenceThreshold).Exists() ? _configuration.GetValue<int>(Constants.TimeDifferenceThreshold) : 5;
-        }
+        private int GetTimeDifferenceThreshold() => 
+            _configuration.GetSection(Constants.TimeDifferenceThreshold).Exists() ? _configuration.GetValue<int>(Constants.TimeDifferenceThreshold) : 5;
 
-        private async Task<ICouchbaseCollection> GetCollectionAsync(ConnectionData connectionData, string bucket)
-        {
-            return await (await GetBucketAsync(connectionData, bucket)).DefaultCollectionAsync();
-        }
+        private async Task<ICouchbaseCollection> GetCollectionAsync(ConnectionData connectionData, string bucket) => 
+            await (await GetBucketAsync(connectionData, bucket)).DefaultCollectionAsync();
 
-        private Task<IBucket> GetBucketAsync(ConnectionData connectionData, string bucket)
-        {
-            return _bucketProvider.GetBucket(connectionData, bucket);
-        }
+        private Task<IBucket> GetBucketAsync(ConnectionData connectionData, string bucket) =>
+            _bucketProvider.GetBucket(connectionData, bucket);
     }
 }

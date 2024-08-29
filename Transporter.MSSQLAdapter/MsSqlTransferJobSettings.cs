@@ -23,10 +23,6 @@ namespace Transporter.MSSQLAdapter
         public ITargetOptions Target { get; set; }
         public IInterimOptions Interim { get; set; }
 
-        public override string ToString()
-        {
-            return
-                $"Name : {Name}\tCron : {Cron}\tSource : {Source}\tTarget : {Target}";
-        }
+        public override string ToString() => $"Name : {Name}\tCron : {Cron}\tSource : {Source}\tTarget : {Target}";
     }
 }

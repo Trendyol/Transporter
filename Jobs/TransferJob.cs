@@ -16,16 +16,10 @@ namespace TransporterService.Jobs
 {
     [PersistJobDataAfterExecution]
     [DisallowConcurrentExecution]
-    public class TransferJob : IJob
+    public class TransferJob(IAdapterFactory adapterFactory, ILogger<TransferJob> logger) : IJob
     {
-        private readonly IAdapterFactory _adapterFactory;
-        private readonly ILogger<TransferJob> _logger;
-
-        public TransferJob(IAdapterFactory adapterFactory, ILogger<TransferJob> logger)
-        {
-            _adapterFactory = adapterFactory;
-            _logger = logger;
-        }
+        private readonly IAdapterFactory _adapterFactory = adapterFactory;
+        private readonly ILogger<TransferJob> _logger = logger;
 
         public TransferJobSettings TransferJobSettings { private get; set; }
 

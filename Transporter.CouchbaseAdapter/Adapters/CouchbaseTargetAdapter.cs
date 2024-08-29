@@ -13,17 +13,11 @@ using Transporter.CouchbaseAdapter.Services.Target.Interfaces;
 
 namespace Transporter.CouchbaseAdapter.Adapters
 {
-    public class CouchbaseTargetAdapter : ITargetAdapter
+    public class CouchbaseTargetAdapter(ITargetService targetService, IConfiguration configuration) : ITargetAdapter
     {
-        private readonly ITargetService _targetService;
-        private readonly IConfiguration _configuration;
+        private readonly ITargetService _targetService = targetService;
+        private readonly IConfiguration _configuration = configuration;
         private ICouchbaseTargetSettings _settings;
-
-        public CouchbaseTargetAdapter(ITargetService targetService, IConfiguration configuration)
-        {
-            _targetService = targetService;
-            _configuration = configuration;
-        }
 
         public object Clone()
         {
@@ -44,25 +38,14 @@ namespace Transporter.CouchbaseAdapter.Adapters
             return string.Equals(type, Utils.Constants.OptionsType, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public void SetOptions(ITransferJobSettings transferJobSettings)
-        {
-            _settings = GetOptions(transferJobSettings);
-        }
+        public void SetOptions(ITransferJobSettings transferJobSettings) => _settings = GetOptions(transferJobSettings);
 
-        public void SetOptions(IPollingJobSettings jobSettings)
-        {
-            _settings = GetOptions(jobSettings);
-        }
+        public void SetOptions(IPollingJobSettings jobSettings) => _settings = GetOptions(jobSettings);
 
-        public async Task SetAsync(string data)
-        {
-            await _targetService.SetTargetDataAsync(_settings, data);
-        }
+        public async Task SetAsync(string data) => await _targetService.SetTargetDataAsync(_settings, data);
 
-        public async Task SetInterimTableAsync(string data, string dataSourceName)
-        {
+        public async Task SetInterimTableAsync(string data, string dataSourceName) => 
             await _targetService.SetInterimDataAsync(_settings, data, dataSourceName);
-        }
 
         private ICouchbaseTargetSettings GetOptions(IPollingJobSettings jobSettings)
         {

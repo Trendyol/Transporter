@@ -14,17 +14,11 @@ using Transporter.MSSQLAdapter.Utils;
 
 namespace Transporter.MSSQLAdapter.Adapters
 {
-    public class MsSqlTargetAdapter : ITargetAdapter
+    public class MsSqlTargetAdapter(ITargetService targetService, IConfiguration configuration) : ITargetAdapter
     {
-        private readonly IConfiguration _configuration;
-        private readonly ITargetService _targetService;
+        private readonly IConfiguration _configuration = configuration;
+        private readonly ITargetService _targetService = targetService;
         private IMsSqlTargetSettings _settings;
-
-        public MsSqlTargetAdapter(ITargetService targetService, IConfiguration configuration)
-        {
-            _targetService = targetService;
-            _configuration = configuration;
-        }
 
         public bool CanHandle(ITransferJobSettings transferJobSettings)
         {
@@ -39,25 +33,14 @@ namespace Transporter.MSSQLAdapter.Adapters
             return string.Equals(type, MsSqlAdapterConstants.OptionsType, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public void SetOptions(ITransferJobSettings transferJobSettings)
-        {
-            _settings = GetOptions(transferJobSettings);
-        }
+        public void SetOptions(ITransferJobSettings transferJobSettings) => _settings = GetOptions(transferJobSettings);
 
-        public void SetOptions(IPollingJobSettings jobSettings)
-        {
-            _settings = GetOptions(jobSettings);
-        }
+        public void SetOptions(IPollingJobSettings jobSettings) => _settings = GetOptions(jobSettings);
 
-        public async Task SetAsync(string data)
-        {
-            await _targetService.SetTargetDataAsync(_settings, data);
-        }
+        public async Task SetAsync(string data) => await _targetService.SetTargetDataAsync(_settings, data);
 
-        public async Task SetInterimTableAsync(string data, string dataSourceName)
-        {
+        public async Task SetInterimTableAsync(string data, string dataSourceName) => 
             await _targetService.SetTargetTemporaryDataAsync(_settings, data, dataSourceName);
-        }
 
         public virtual object Clone()
         {

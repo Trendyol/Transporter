@@ -15,16 +15,10 @@ namespace TransporterService.Jobs
 {
     [PersistJobDataAfterExecution]
     [DisallowConcurrentExecution]
-    public class PollingJob : IJob
+    public class PollingJob(IAdapterFactory adapterFactory, ILogger<PollingJob> logger) : IJob
     {
-        private readonly IAdapterFactory _adapterFactory;
-        private readonly ILogger<PollingJob> _logger;
-
-        public PollingJob(IAdapterFactory adapterFactory, ILogger<PollingJob> logger)
-        {
-            _adapterFactory = adapterFactory;
-            _logger = logger;
-        }
+        private readonly IAdapterFactory _adapterFactory = adapterFactory;
+        private readonly ILogger<PollingJob> _logger = logger;
 
         public PollingJobSettings PollingJobSettings { private get; set; }
 

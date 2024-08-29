@@ -16,14 +16,8 @@ namespace Transporter.Core.Utils
             Converters = new List<JsonConverter> {new StringEnumConverter {CamelCaseText = true}}
         };
 
-        public static string ToJson(this object obj)
-        {
-            return JsonConvert.SerializeObject(obj, JsonSerializerSettings);
-        }
+        public static string ToJson(this object obj) => JsonConvert.SerializeObject(obj, JsonSerializerSettings);
 
-        public static T ToObject<T>(this string serializedJson)
-        {
-            return JsonConvert.DeserializeObject<T>(serializedJson, JsonSerializerSettings);
-        }
+        public static T ToObject<T>(this string serializedJson) => JsonConvert.DeserializeObject<T>(serializedJson, JsonSerializerSettings);
     }
 }
