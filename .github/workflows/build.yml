@@ -19,3 +19,11 @@ jobs:
           password: ${{ secrets.GHCR_TOKEN }}
           dockerfile: Dockerfile
           addLatest: true
+
+
+  security-gates:
+    uses: Trendyol/security-actions/.github/workflows/security-gates.yml@master
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
